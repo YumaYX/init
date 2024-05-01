@@ -1,0 +1,66 @@
+---
+# tasks file for roles/ruby
+
+# - name: Ensure the crb repository is enabled
+#   community.general.dnf_config_manager:
+#     name: crb
+#     state: enabled
+- name : enable crb
+  shell: bash -lc "dnf config-manager --set-enabled crb"
+
+- name: install some packages for ruby
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - bzip2
+    - gcc
+    - openssl-devel
+    - readline-devel
+    - zlib-devel
+    - libyaml-devel
+    - git
+
+- name: git clone
+  ansible.builtin.git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: /home/yuma/.rbenv
+  become: yes
+  become_user: "yuma"
+
+- name: git clone
+  ansible.builtin.git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: /home/yuma/.rbenv/plugins/ruby-build
+  become: yes
+  become_user: "yuma"
+
+- name: Handle the error
+  block:
+    - name: Check Ruby Install
+      shell: bash -lc "ruby -v"
+  rescue:
+    - name: Ruby Install
+      shell: /bin/bash -lc "rbenv install 3.3.0 && rbenv global 3.3.0"
+  become: yes
+  become_user: "yuma"
+
+- name: Update Gems
+  shell: bash -lc "gem update --system"
+  become: yes
+  become_user: "yuma"
+  environment:
+    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}
+
+- name: Install gems
+  community.general.gem:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - rake
+    - minitest
+    - serverspec
+  become: yes
+  become_user: "yuma"
+  environment:
+    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}

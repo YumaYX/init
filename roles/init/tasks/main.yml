@@ -1,0 +1,25 @@
+---
+# tasks file for roles/init
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Create user
+  user:
+    name: "yuma"
+    shell: /bin/bash
+
+- name: git clone
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/dotfiles.git
+    dest: /home/yuma/dotfiles
+  become: yes
+  become_user: "yuma"
+
+- name: Run 'install' target as yuma
+  community.general.make:
+    chdir: /home/yuma/dotfiles
+    target: install
+  become: yes
+  become_user: "yuma"
