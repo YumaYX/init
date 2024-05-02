@@ -1,0 +1,10 @@
+---
+# tasks file for roles/rust
+- name: Install rust
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - rust
+      - cargo

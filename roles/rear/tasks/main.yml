@@ -1,0 +1,23 @@
+---
+# tasks file for roles/rear
+- name: Install rear
+  ansible.builtin.dnf:
+    name: rear
+    state: present
+
+- name: Create /etc/rear/local.conf with new configuration
+  ansible.builtin.copy:
+    dest: /etc/rear/local.conf
+    content: |
+      OUTPUT=ISO
+      OUTPUT_URL=file:///mnt
+      BACKUP=NETFS
+      BACKUP_URL=file:///mnt
+      BACKUP_PROG_EXCLUDE=("${BACKUP_PROG_EXCLUDE[@]}" '/media' '/vat/tmp' '/var/crash' '/kdump' '/mnt')
+      LOGFILE="$LOG_DIR/rear-$HOSTNAME.log"
+      GRUB_RESCUE=
+      USING_UEFI_BOOTLOADER=1
+
+- name: Run ReaR backup
+  ansible.builtin.command:
+    cmd: rear -v mkbackup

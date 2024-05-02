@@ -1,0 +1,20 @@
+text
+reboot
+url --url=http://{{ pxe_network }}{{ pxe_host }}/linux9/
+
+keyboard --vckeymap=jp106 --xlayouts='jp','us'
+lang en_US.UTF-8
+
+network --bootproto=dhcp --ipv6=auto --activate --hostname=localhost
+zerombr
+
+%packages
+@core
+%end
+
+ignoredisk --only-use=sda
+autopart
+clearpart --all --initlabel
+
+timezone Asia/Tokyo --utc
+rootpw --iscrypted --allow-ssh $6$fy2QCRgOe4DdZvKA$Hu/L0AthQHy822kMTlUzs1FXSrvhWkcy/SMrbrh35EPoM.r.JG9C8aL0Tqdr0Az/sFsC4a6WC2Mfv1W1NDMpD1

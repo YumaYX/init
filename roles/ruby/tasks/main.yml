@@ -1,66 +1,138 @@
 ---
 # tasks file for roles/ruby
+- name: Ensure CRB repository is enabled
+  ansible.builtin.command: bash -lc "dnf config-manager --set-enabled crb"
+  register: result
+  changed_when: result.rc != 0
 
-# - name: Ensure the crb repository is enabled
-#   community.general.dnf_config_manager:
-#     name: crb
-#     state: enabled
-- name : enable crb
-  shell: bash -lc "dnf config-manager --set-enabled crb"
-
-- name: install some packages for ruby
+- name: Install necessary packages for Ruby
   ansible.builtin.dnf:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - bzip2
-    - gcc
-    - openssl-devel
-    - readline-devel
-    - zlib-devel
-    - libyaml-devel
-    - git
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - bzip2
+      - gcc
+      - openssl-devel
+      - readline-devel
+      - zlib-devel
+      - libyaml-devel
+      - git
+      - rust
+      - cargo
 
-- name: git clone
+- name: Install extra packages for Ruby
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - ruby-devel
+
+- name: Install necessary packages for Gem
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - libffi-devel
+
+- name: Git clone rbenv
   ansible.builtin.git:
     repo: https://github.com/rbenv/rbenv.git
-    dest: /home/yuma/.rbenv
-  become: yes
-  become_user: "yuma"
+    dest: /home/{{ prime_user }}/.rbenv
+  become: true
+  become_user: "{{ prime_user }}"
 
-- name: git clone
+- name: Git clone ruby-build
   ansible.builtin.git:
     repo: https://github.com/rbenv/ruby-build.git
-    dest: /home/yuma/.rbenv/plugins/ruby-build
-  become: yes
-  become_user: "yuma"
+    dest: /home/{{ prime_user }}/.rbenv/plugins/ruby-build
+  become: true
+  become_user: "{{ prime_user }}"
 
-- name: Handle the error
-  block:
-    - name: Check Ruby Install
-      shell: bash -lc "ruby -v"
-  rescue:
-    - name: Ruby Install
-      shell: /bin/bash -lc "rbenv install 3.3.0 && rbenv global 3.3.0"
-  become: yes
-  become_user: "yuma"
+- name: Check Ruby installation
+  ansible.builtin.command: bash -lc "ruby -v"
+  ignore_errors: true
+  become: true
+  become_user: "{{ prime_user }}"
+  register: command_result
+  changed_when: command_result.rc != 0
+  failed_when: false
+
+- name: Install Ruby
+  ansible.builtin.shell: /bin/bash -lc "CONFIGURE_OPTS='--disable-install-doc' rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
+  become: true
+  become_user: "{{ prime_user }}"
+  when: ('ruby ' + ruby_version) not in command_result.stdout
+  register: result
+  changed_when: result.rc != 0
+
+- name: Update Gems system
+  ansible.builtin.command: bash -lc "gem update --system"
+  become: true
+  become_user: "{{ prime_user }}"
+  register: result
+  changed_when: result.rc != 0
+
+#- name: Install necessary gems
+#  community.general.gem:
+#    name: "{{ item }}"
+#    executable: /home/{{ prime_user }}/.rbenv/shims/gem
+#    user_install: false
+#  with_items:
+#    - bundler
+#    - minitest
+#    - rake
+#    - roo
+#    - rubocop
+#    - rails
+#    - activerecord
+#    - sqlite3
+#  become: true
+#  become_user: "{{ prime_user }}"
+
+- name: Install necessary gems (no idempotency)
+  command: "/home/{{ prime_user }}/.rbenv/shims/gem install {{ item }}"
+  loop:
+    - bundler
+    - minitest
+    - rake
+    - roo
+    - rubocop
+    - rails
+    - activerecord
+    - sqlite3
+  become: true
+  become_user: "{{ prime_user }}"
 
 - name: Update Gems
-  shell: bash -lc "gem update --system"
-  become: yes
-  become_user: "yuma"
-  environment:
-    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}
+  ansible.builtin.command: bash -lc "gem update"
+  become: true
+  become_user: "{{ prime_user }}"
+  register: result
+  changed_when: result.rc != 0
 
-- name: Install gems
-  community.general.gem:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - rake
-    - minitest
-    - serverspec
-  become: yes
-  become_user: "yuma"
-  environment:
-    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}
+- name: shell of update ruby gems
+  ansible.builtin.copy:
+    dest: /usr/local/bin/update-rubygems
+    content: |
+      #!/usr/bin/env bash
+      export RBENV_ROOT="$HOME/.rbenv"
+      export PATH="$RBENV_ROOT/bin:$PATH"
+      eval "$(rbenv init -)"
+      gem update --system
+      gem update
+    owner: "{{ prime_user }}"
+    group: "{{ prime_user }}"
+    mode: "0755"
+
+- name: Gem update - cron
+  ansible.builtin.cron:
+    name: gem-update-cron
+    minute: "0"
+    hour: "18"
+    weekday: "5"
+    job: /usr/local/bin/update-rubygems
+    user: "{{ prime_user }}"
+

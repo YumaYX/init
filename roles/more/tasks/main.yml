@@ -1,0 +1,51 @@
+---
+# tasks file for roles/more
+- name: Add Google Chrome repository
+  ansible.builtin.yum_repository:
+    name: google-chrome
+    description: Google Chrome
+    baseurl: https://dl.google.com/linux/chrome/rpm/stable/x86_64
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://dl.google.com/linux/linux_signing_key.pub
+
+- name: Install Google Chrome
+  dnf:
+    name: google-chrome-stable
+    state: present
+
+- name: Check if ollama is installed
+  command: ollama --version
+  register: ollama_check
+  ignore_errors: true
+
+- name: Download and install Ollama
+  shell: |
+      curl -fsSL https://ollama.com/install.sh | sh
+  when: ollama_check.rc != 0
+
+- name: Enable and start Ollama service
+  systemd:
+    name: ollama
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: Install Server with GUI
+  ansible.builtin.shell: |
+    dnf -y groupinstall "Server with GUI"
+
+- name: Git clone # noqa latest[git]
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/terminal-design.git
+    dest: /work/downloads/terminal-design
+  become: true
+  become_user: "{{ prime_user }}"
+
+- name: Run 'load' target as {{ prime_user }}
+  community.general.make:
+    chdir: /work/downloads/terminal-design
+    target: load
+  become: true
+  become_user: "{{ prime_user }}"
+

@@ -1,25 +1,64 @@
 ---
 # tasks file for roles/init
-- name: Upgrade all packages
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: y.localdomain
+
+#- name: Uninstall Packages
+#  ansible.builtin.dnf:
+#    name: "{{ packages }}"
+#    state: absent
+#    autoremove: true
+#  ignore_errors: true
+#  vars:
+#    packages:
+#      - cockpit*
+#      - cups
+#      - avahi*
+#      - traceroute
+#      - telnet
+#      - nano
+
+- name: Set fastestmirror
+  ansible.builtin.ini_file:
+    path: /etc/dnf/dnf.conf
+    section: main
+    option: fastestmirror
+    value: 'True'
+
+- name: Set max_parallel_downloads
+  ansible.builtin.ini_file:
+    path: /etc/dnf/dnf.conf
+    section: main
+    option: max_parallel_downloads
+    value: '10'
+
+- name: Dnf update - cron
+  ansible.builtin.cron:
+    name: dnf-update-cron
+    minute: "0"
+    hour: "4"
+    job: dnf -y update
+
+- name: Install tools
   ansible.builtin.dnf:
-    name: "*"
-    state: latest
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - firewalld
+    - make
+    - vim
+    - jq
+    - cronie
+#    - "@development"
+#    - "@Server with GUI"
 
-- name: Create user
-  user:
-    name: "yuma"
-    shell: /bin/bash
+- name: Install package group
+  ansible.builtin.shell: |
+    dnf -y groupinstall "Development Tools"
 
-- name: git clone
-  ansible.builtin.git:
-    repo: https://github.com/YumaYX/dotfiles.git
-    dest: /home/yuma/dotfiles
-  become: yes
-  become_user: "yuma"
-
-- name: Run 'install' target as yuma
-  community.general.make:
-    chdir: /home/yuma/dotfiles
-    target: install
-  become: yes
-  become_user: "yuma"
+- name: Start firewalld
+  ansible.builtin.systemd_service:
+    name: firewalld
+    enabled: true
+    state: started

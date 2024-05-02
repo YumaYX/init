@@ -1,0 +1,170 @@
+---
+# Ansible playbook for configuring PXE boot server
+
+# Tasks for setting up TFTP server
+- name: Install tftp-server
+  ansible.builtin.dnf:
+    name: tftp-server
+    state: present
+
+- name: Start tftp-server
+  ansible.builtin.systemd_service:
+    name: tftp
+    state: restarted
+    enabled: true
+
+- name: Install firewalld
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+
+- name: Start firewalld
+  ansible.builtin.systemd_service:
+    name: firewalld
+    enabled: true
+    state: started
+
+- name: Configure firewalld for tftp
+  ansible.posix.firewalld:
+    service: tftp
+    permanent: true
+    state: enabled
+
+- name: Reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
+
+# Tasks for configuring DHCP server
+- name: Install dhcp-server
+  ansible.builtin.dnf:
+    name: dhcp-server
+    state: present
+
+- name: Configure dhcpd.conf
+  ansible.builtin.template:
+    src: templates/dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+
+- name: Configure firewalld for dhcp
+  ansible.posix.firewalld:
+    service: dhcp
+    permanent: true
+    state: enabled
+
+- name: Reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
+
+- name: Start dhcp-server
+  ansible.builtin.systemd_service:
+    name: dhcpd
+    state: restarted
+    enabled: true
+
+# Tasks for configuring TFTP boot files
+- name: Create kickstart directory
+  ansible.builtin.file:
+    path: /tmp/rpm
+    state: directory
+
+- name: Install and extract RPMs for boot
+  ansible.builtin.shell: >
+    dnf -y reinstall --downloadonly --downloaddir=/tmp/rpm shim grub2-efi-x64
+  register: result
+  changed_when: result.rc != 0
+
+- name: Extract shim-x64-*.rpm
+  ansible.builtin.shell: >
+    cd /tmp/rpm && rpm2cpio shim-x64-*.rpm | cpio -dimv
+  register: result
+  changed_when: result.rc != 0
+
+- name: Extract grub2-efi-x64-*.rpm
+  ansible.builtin.shell: >
+    cd /tmp/rpm && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv
+  register: result
+  changed_when: result.rc != 0
+
+- name: Copy BOOTX64.EFI
+  ansible.builtin.copy:
+    src: /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI
+    dest: /var/lib/tftpboot/BOOTX64.EFI
+    mode: "0644"
+    force: true
+
+- name: Copy grubx64.efi
+  ansible.builtin.copy:
+    src: /tmp/rpm/boot/efi/EFI/almalinux/grubx64.efi
+    dest: /var/lib/tftpboot/grubx64.efi
+    force: true
+    mode: "0644"
+
+- name: Download AlmaLinux ISO
+  ansible.builtin.get_url:
+    url: https://ftp.riken.jp/Linux/almalinux/9.4/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso
+    dest: /tmp/linux9.iso
+
+- name: Create directory for AlmaLinux PXE boot
+  ansible.builtin.file:
+    path: /var/pxe/linux9
+    state: directory
+
+- name: Mount AlmaLinux DVD read-only
+  ansible.posix.mount:
+    src: /tmp/linux9.iso
+    path: /var/pxe/linux9
+    fstype: iso9660
+    opts: loop,ro
+    state: mounted
+
+- name: Create directory for PXE boot files
+  ansible.builtin.file:
+    path: /var/lib/tftpboot/linux9
+    state: directory
+
+- name: Copy vmlinuz
+  ansible.builtin.copy:
+    src: /var/pxe/linux9/images/pxeboot/vmlinuz
+    dest: /var/lib/tftpboot/linux9
+    force: true
+
+- name: Copy initrd.img
+  ansible.builtin.copy:
+    src: /var/pxe/linux9/images/pxeboot/initrd.img
+    dest: /var/lib/tftpboot/linux9
+    force: true
+
+- name: Configure grub.cfg
+  ansible.builtin.template:
+    src: templates/grub.cfg.j2
+    dest: /var/lib/tftpboot/grub.cfg
+
+# Tasks for configuring HTTP server
+- name: Configure pxeboot.conf
+  ansible.builtin.template:
+    src: templates/pxeboot.conf.j2
+    dest: /etc/httpd/conf.d/pxeboot.conf
+
+- name: Restart httpd service
+  ansible.builtin.systemd_service:
+    name: httpd
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: Create kickstart directory
+  ansible.builtin.file:
+    path: /var/www/html/ks
+    state: directory
+
+- name: Configure ks.cfg
+  ansible.builtin.template:
+    src: templates/ks.cfg.j2
+    dest: /var/www/html/ks/ks.cfg
+
+- name: Reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded

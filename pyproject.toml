@@ -1,0 +1,10 @@
+[project]
+name = "init"
+version = "0.1.0"
+description = "init"
+readme = "README.md"
+requires-python = "==3.11.*"
+dependencies = [
+    "ansible==8.7.0",
+    "ansible-core==2.15.13"
+]

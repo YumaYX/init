@@ -1,0 +1,25 @@
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+
+option space pxelinux;
+option pxelinux.magic code 208 = string;
+option pxelinux.configfile code 209 = text;
+option pxelinux.pathprefix code 210 = text;
+option pxelinux.reboottime code 211 = unsigned integer 32;
+option architecture-type code 93 = unsigned integer 16;
+
+subnet {{ pxe_network }}0 netmask 255.255.255.0 {
+  range dynamic-bootp {{ pxe_network }}200 {{ pxe_network }}250;
+  option broadcast-address {{ pxe_network }}255;
+  option routers {{ pxe_network }}{{ pxe_host }};
+  class "pxeclients" {
+    match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
+    next-server {{ pxe_network }}{{ pxe_host }};
+    if option architecture-type = 00:07 {
+      filename "BOOTX64.EFI";
+    } else {
+      filename "pxelinux.0";
+    }
+  }
+}

@@ -1,0 +1,23 @@
+---
+# tasks file for roles/ys1
+- name: Git clone YS1
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/YS1.git
+    dest: /work/downloads/YS1
+    force: yes
+  become: true
+  become_user: "{{ prime_user }}"
+
+- name: bundle install
+  ansible.builtin.command: ~/.rbenv/shims/bundle install
+  args:
+    chdir: /work/downloads/YS1
+  become: true
+  become_user: "{{ prime_user }}"
+
+- name: rake install local
+  ansible.builtin.command: ~/.rbenv/shims/bundle exec rake install:local
+  args:
+    chdir: /work/downloads/YS1
+  become: true
+  become_user: "{{ prime_user }}"
