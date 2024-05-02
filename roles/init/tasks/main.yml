@@ -7,19 +7,19 @@
 
 - name: Create user
   user:
-    name: "yuma"
+    name: "{{ prime_user }}"
     shell: /bin/bash
 
 - name: git clone
   ansible.builtin.git:
     repo: https://github.com/YumaYX/dotfiles.git
-    dest: /home/yuma/dotfiles
+    dest: /home/{{ prime_user }}/dotfiles
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
 
-- name: Run 'install' target as yuma
+- name: Run 'install' target as {{ prime_user }}
   community.general.make:
-    chdir: /home/yuma/dotfiles
+    chdir: /home/{{ prime_user }}/dotfiles
     target: install
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"

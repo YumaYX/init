@@ -1,13 +1,6 @@
 default:
 	cat makefile | grep ^[a-z]
 
-test:
-	chmod 400 config/id_rsa
-	ansible -i hosts all -m ping
-
-role: test
-	ansible-playbook -i hosts r.yml -v
-
 freeze:
 	python3 -m pip freeze > requirements.txt
 
@@ -21,3 +14,6 @@ update:
 	sleep 3
 	git add .
 	git commit -am 'update'
+
+local:
+	ansible-playbook -i hosts r.yml -c local

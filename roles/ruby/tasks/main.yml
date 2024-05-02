@@ -24,16 +24,16 @@
 - name: git clone
   ansible.builtin.git:
     repo: https://github.com/rbenv/rbenv.git
-    dest: /home/yuma/.rbenv
+    dest: /home/{{ prime_user }}/.rbenv
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
 
 - name: git clone
   ansible.builtin.git:
     repo: https://github.com/rbenv/ruby-build.git
-    dest: /home/yuma/.rbenv/plugins/ruby-build
+    dest: /home/{{ prime_user }}/.rbenv/plugins/ruby-build
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
 
 - name: Handle the error
   block:
@@ -43,14 +43,14 @@
     - name: Ruby Install
       shell: /bin/bash -lc "rbenv install 3.3.0 && rbenv global 3.3.0"
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
 
 - name: Update Gems
   shell: bash -lc "gem update --system"
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
   environment:
-    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}
+    PATH: /home/{{ prime_user }}/.rbenv/shims:{{ ansible_env.PATH }}
 
 - name: Install gems
   community.general.gem:
@@ -61,6 +61,6 @@
     - minitest
     - serverspec
   become: yes
-  become_user: "yuma"
+  become_user: "{{ prime_user }}"
   environment:
-    PATH: /home/yuma/.rbenv/shims:{{ ansible_env.PATH }}
+    PATH: /home/{{ prime_user }}/.rbenv/shims:{{ ansible_env.PATH }}

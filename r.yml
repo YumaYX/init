@@ -1,4 +1,6 @@
 - hosts: all
+  vars:
+    prime_user: yuma
   roles:
     - init
     - ruby

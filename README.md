@@ -1,4 +1,3 @@
-
 ```sh
-ssh-keygen -t rsa -b 4096
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/YumaYX/init/main/init.sh)"
 ```
