@@ -1,0 +1,25 @@
+---
+# Tasks file for managing HTTPD
+
+- name: Configure firewalld for HTTP
+  ansible.posix.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+
+- name: Reload firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: reloaded
+
+- name: Install HTTPD package
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+
+- name: Restart HTTPD service
+  ansible.builtin.systemd_service:
+    name: httpd
+    state: restarted
+    enabled: true
+    daemon_reload: true

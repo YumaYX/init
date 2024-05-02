@@ -1,4 +1,32 @@
-- hosts: all
+---
+- name: Check Env.
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check if the system is virtualized
+      ansible.builtin.command: bash -lc "systemd-detect-virt"
+      register: virt_check
+      ignore_errors: true
+      failed_when: virt_check.rc != 1
+
+- name: Init
+  hosts: all
+  vars:
+    prime_user: yuma
+    ruby_version: 3.3.5
   roles:
     - init
+    - user
     - ruby
+    - httpd
+    - nfs
+    - workspace
+    - role: kvm
+      when: virt_check.stdout == "none"
+      ignore_errors: true
+    - role: code
+      when: virt_check.stdout == "none"
+      ignore_errors: true
+    - role: more
+      ignore_errors: true
+    - serverspec
