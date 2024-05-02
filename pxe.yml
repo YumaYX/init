@@ -1,0 +1,10 @@
+---
+- name: Build PXE
+  hosts: all
+  gather_facts: false
+  vars:
+    pxe_network: 172.17.64.
+    pxe_host: 2
+  roles:
+    - httpd
+    - pxe

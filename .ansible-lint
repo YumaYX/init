@@ -1,0 +1,11 @@
+---
+skip_list:
+  - latest[git]
+  - risky-file-permissions
+  - risky-shell-pipe
+
+exclude_paths:
+  - roles/more/
+  - r.yml
+
+parseable: true

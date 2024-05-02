@@ -1,0 +1,5 @@
+set timeout=1
+menuentry "Install linux9" {
+  linuxefi linux9/vmlinuz ip=dhcp inst.ks=http://{{ pxe_network }}{{ pxe_host }}/ks/ks.cfg
+  initrdefi linux9/initrd.img
+}
