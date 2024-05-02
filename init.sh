@@ -14,7 +14,7 @@ fi
 dnf -y install python3.11-pip git pip
 
 if [ -e /tmp/init ]; then
-  mv -v /tmp/init /tmp/init.old
+  mv -v /tmp/init /tmp/init.bak$$$(date +%Y%m%d%H%M%S)
 fi
 
 git clone https://github.com/YumaYX/init.git /tmp/init \
@@ -22,4 +22,5 @@ git clone https://github.com/YumaYX/init.git /tmp/init \
     && python3.11 -m pip install -r requirements.txt \
     && ansible-playbook -i hosts r.yml -c local
 
-mv -v /tmp/init /tmp/init.bak
+mv -v /tmp/init /tmp/init.bak$$$(date +%Y%m%d%H%M%S)
+
