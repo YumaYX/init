@@ -13,7 +13,13 @@ fi
 
 dnf -y install python3.11-pip git pip
 
+if [ -e /tmp/init ]; then
+  mv -v /tmp/init /tmp/init.old
+fi
+
 git clone https://github.com/YumaYX/init.git /tmp/init \
     && cd /tmp/init \
     && python3.11 -m pip install -r requirements.txt \
     && ansible-playbook -i hosts r.yml -c local
+
+mv -v /tmp/init /tmp/init.bak

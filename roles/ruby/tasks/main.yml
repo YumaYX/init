@@ -41,7 +41,7 @@
       shell: bash -lc "ruby -v"
   rescue:
     - name: Ruby Install
-      shell: /bin/bash -lc "rbenv install 3.3.0 && rbenv global 3.3.0"
+      shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
   become: yes
   become_user: "{{ prime_user }}"
 

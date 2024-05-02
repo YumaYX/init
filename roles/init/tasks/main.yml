@@ -15,6 +15,11 @@
     name: "{{ prime_user }}"
     shell: /bin/bash
 
+- name: sudo
+  template:
+    src: templates/sudo.j2
+    dest: /etc/sudoers.d/{{ prime_user }}x
+
 - name: git clone
   ansible.builtin.git:
     repo: https://github.com/YumaYX/dotfiles.git
