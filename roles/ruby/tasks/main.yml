@@ -60,6 +60,7 @@
     - rake
     - minitest
     - serverspec
+    - rubocop
   become: yes
   become_user: "{{ prime_user }}"
   environment:
