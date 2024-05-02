@@ -11,7 +11,7 @@ install:
 
 update:
 	git status
-	sleep 3
+	sleep 5
 	git add .
 	git commit -am 'update'
 

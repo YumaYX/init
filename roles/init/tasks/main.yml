@@ -5,6 +5,11 @@
     name: "*"
     state: latest
 
+- name: install dev tools
+  ansible.builtin.dnf:
+    name: "@development"
+    state: present
+
 - name: Create user
   user:
     name: "{{ prime_user }}"
