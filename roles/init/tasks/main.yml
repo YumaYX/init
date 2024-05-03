@@ -5,10 +5,13 @@
     name: "*"
     state: latest
 
-- name: install dev tools
+- name: install tools
   ansible.builtin.dnf:
-    name: "@development"
+    name: "{{ item }}"
     state: present
+  with_items:
+    - "@development"
+    - vim
 
 - name: Create user
   user:
