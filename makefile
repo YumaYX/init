@@ -10,3 +10,6 @@ update:
 local:
 	/usr/local/bin/ansible-playbook -i hosts r.yml -c local
 
+.PHONY: serverspec
+serverspec:
+	/usr/local/bin/ansible-playbook -i hosts serverspec.yml -c local

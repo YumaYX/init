@@ -21,5 +21,6 @@
   ansible.builtin.systemd_service:
     name: httpd
     state: restarted
+    enabled: true
     daemon_reload: true
 
