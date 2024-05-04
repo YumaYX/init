@@ -13,6 +13,10 @@
     - "@development"
     - vim
 
+- name: set hostname
+  ansible.builtin.hostname:
+    name: x.y
+
 - name: Create user
   user:
     name: "{{ prime_user }}"
@@ -21,7 +25,7 @@
 - name: sudo
   template:
     src: templates/sudo.j2
-    dest: /etc/sudoers.d/{{ prime_user }}x
+    dest: /etc/sudoers.d/{{ prime_user }}
 
 - name: git clone
   ansible.builtin.git:
