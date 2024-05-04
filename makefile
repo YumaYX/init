@@ -8,5 +8,5 @@ update:
 	git commit -am 'update'
 
 local:
-	ansible-playbook -i hosts r.yml -c local
+	/usr/local/bin/ansible-playbook -i hosts r.yml -c local
 

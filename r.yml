@@ -4,4 +4,6 @@
     ruby_version: 3.3.0
   roles:
     - init
+    - httpd
     - ruby
+

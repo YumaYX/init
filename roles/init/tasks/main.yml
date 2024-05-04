@@ -13,6 +13,17 @@
     - "@development"
     - vim
 
+- name: install firewalld
+  ansible.builtin.dnf:
+    name: "firewalld"
+    state: present
+
+- name: start firewalld
+  ansible.builtin.systemd_service:
+    name: "firewalld"
+    enabled: yes
+    state: started
+
 - name: set hostname
   ansible.builtin.hostname:
     name: x.y

@@ -1,0 +1,25 @@
+---
+# tasks file for roles/httpd
+
+- name: firewalld for http
+  ansible.posix.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+
+- name: install httpd
+  ansible.builtin.dnf:
+    name: httpd
+    state: latest
+
+- name: Restart service
+  ansible.builtin.systemd_service:
+    name: httpd
+    state: restarted
+    daemon_reload: true
+
