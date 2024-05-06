@@ -70,13 +70,32 @@
     path: "/tmp/rpm"
     state: directory
 
-# dnf -y reinstall --downloadonly --downloaddir=/tmp/rpm/ shim grub2-efi-x64
+- name reinst shim grub
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    download_dir: /tmp/rpm
+    download_only: yes
+  with_items:
+    - shim
+    - grub2-efi-x64
 
-# cd /tmp/rpm/ && rpm2cpio shim-x64-*.rpm | cpio -dimv
-# cd /tmp/rpm/ && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv
+- name : rpm2cpio shim-x64-*.rpm
+  shell: bash -lc "cd /tmp/rpm/ && rpm2cpio shim-x64-*.rpm | cpio -dimv"
+- name : rpm2cpio grub2-efi-x64-*.rpm
+  shell: bash -lc "cd /tmp/rpm/ && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv"
 
-# cp -v /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI /var/lib/tftpboot/
-# cp -v /tmp/rpm/boot/efi/EFI/*/grubx64.efi    /var/lib/tftpboot/
+- name: copy BOOTX64.EFI
+  copy:
+    src: /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI
+    dest: /var/lib/tftpboot/
+    force: yes
+
+- name: copy grubx64.efi
+  copy:
+    src: "/tmp/rpm/boot/efi/EFI/*/grubx64.efi"
+    dest: /var/lib/tftpboot/
+    force: yes
+    # * is distribution name
 
 - name: chmod 644
   file:
@@ -109,8 +128,17 @@
     path: "/var/lib/tftpboot/linux9"
     state: directory
 
-# cp -prv /var/pxe/linux9/images/pxeboot/{vmlinuz,initrd.img} /var/lib/tftpboot/linux9
+- name: copy vmlinuz
+  copy:
+    src: /var/pxe/linux9/images/pxeboot/vmlinuz
+    dest: /var/lib/tftpboot/linux9
+    force: yes
 
+- name: copy initrd.img
+  copy:
+    src: /var/pxe/linux9/images/pxeboot/initrd.img
+    dest: /var/lib/tftpboot/linux9
+    force: yes
 
 - name: grub.cfg
   template:
