@@ -1,9 +1,9 @@
 ---
 # tasks file for roles/init
-# - name: Upgrade all packages
-#   ansible.builtin.dnf:
-#     name: "*"
-#     state: latest
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
 
 - name: install tools
   ansible.builtin.dnf:
@@ -13,7 +13,7 @@
     packages:
     - vim
     - make
-    # - "@development"
+    - "@development"
 
 - name: install firewalld
   ansible.builtin.dnf:
