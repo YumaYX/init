@@ -1,21 +1,147 @@
 ---
 # tasks file for roles/pxe
+
+######################## tftpd
+- name: Install tftp-server
+  ansible.builtin.dnf:
+    name: tftp-server
+    state: latest
+- name: Up tftp-server
+  ansible.builtin.systemd_service:
+    name: tftp.service
+    state: reloaded
+    enabled: true
+
+- name: install firewalld
+  ansible.builtin.dnf:
+    name: "firewalld"
+    state: present
+
+- name: start firewalld
+  ansible.builtin.systemd_service:
+    name: "firewalld"
+    enabled: yes
+    state: started
+
+- name: firewalld for tftp
+  ansible.posix.firewalld:
+    service: tftp
+    permanent: true
+    state: enabled
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+
+######################## dhcpd
+- name: Install dhcp-server
+  ansible.builtin.dnf:
+    name: dhcp-server
+    state: latest
+
 - name: dhcpd.conf
   template:
     src: templates/dhcpd.conf.j2
     dest: /etc/dhcp/dhcpd.conf
+
+- name: firewalld for dhcp
+  ansible.posix.firewalld:
+    service: dhcp
+    permanent: true
+    state: enabled
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded
+
+- name: Up dhcp-server
+  ansible.builtin.systemd_service:
+    name: dhcpd.service
+    state: reloaded
+    enabled: true
+
+######################## tftpd cfg
+
+# rpmdir=/tmp/rpm
+- name: kickstart directory created
+  file:
+    path: "/tmp/rpm"
+    state: directory
+
+# dnf -y reinstall --downloadonly --downloaddir=/tmp/rpm/ shim grub2-efi-x64
+
+# cd /tmp/rpm/ && rpm2cpio shim-x64-*.rpm | cpio -dimv
+# cd /tmp/rpm/ && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv
+
+# cp -v /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI /var/lib/tftpboot/
+# cp -v /tmp/rpm/boot/efi/EFI/*/grubx64.efi    /var/lib/tftpboot/
+
+- name: chmod 644
+  file:
+    path: "{{ item }}"
+    mode: "664"
+  with_items:
+    - BOOTX64.EFI
+    - grubx64.efi
+
+- name: Download foo.conf
+  ansible.builtin.get_url:
+    url: https://ftp.riken.jp/Linux/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso
+    dest: /tmp/linux9.iso
+
+- name: kickstart directory created
+  file:
+    path: "/var/pxe/linux9"
+    state: directory
+
+- name: Mount DVD read-only
+  ansible.posix.mount:
+    path: /var/pxe/linux9
+    src: /tmp/linux9.iso
+    fstype: iso9660
+    opts: ro,noauto
+    state: present
+
+- name: kickstart directory created
+  file:
+    path: "/var/lib/tftpboot/linux9"
+    state: directory
+
+# cp -prv /var/pxe/linux9/images/pxeboot/{vmlinuz,initrd.img} /var/lib/tftpboot/linux9
+
 
 - name: grub.cfg
   template:
     src: templates/grub.j2
     dest: /var/lib/tftpboot/grub.cfg
 
+##################### httpd
 - name: pxeboot.conf
   template:
     src: templates/pxeboot.conf.j2
     dest: /etc/httpd/conf.d/pxeboot.conf
 
+- name: Restart httpd service
+  ansible.builtin.systemd_service:
+    name: httpd
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: kickstart directory created
+  file:
+    path: "/var/www/html/ks"
+    state: directory
+
 - name: ks.cfg
   template:
     src: templates/ks.cfg.j2
     dest: /var/www/html/ks/ks.cfg
+
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded

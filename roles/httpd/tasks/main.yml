@@ -17,7 +17,7 @@
     name: httpd
     state: latest
 
-- name: Restart service
+- name: Restart httpd service
   ansible.builtin.systemd_service:
     name: httpd
     state: restarted
