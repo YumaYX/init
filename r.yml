@@ -2,6 +2,7 @@
   vars:
     prime_user: yuma
     ruby_version: 3.3.0
+    pxe_network: 172.17.64.
   roles:
     - init
     - httpd

@@ -1,0 +1,21 @@
+---
+# tasks file for roles/pxe
+- name: dhcpd.conf
+  template:
+    src: templates/dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+
+- name: grub.cfg
+  template:
+    src: templates/grub.j2
+    dest: /var/lib/tftpboot/grub.cfg
+
+- name: pxeboot.conf
+  template:
+    src: templates/pxeboot.conf.j2
+    dest: /etc/httpd/conf.d/pxeboot.conf
+
+- name: ks.cfg
+  template:
+    src: templates/ks.cfg.j2
+    dest: /var/www/html/ks/ks.cfg
