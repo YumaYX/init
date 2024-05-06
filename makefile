@@ -1,6 +1,11 @@
 default:
 	cat makefile | grep ^[a-z]
 
+install:
+	python3.11 -m venv venv
+	#source venv/bin/activate
+	#pip3.11 install -r requirements.txt
+
 update:
 	git status
 	sleep 5
