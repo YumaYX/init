@@ -6,10 +6,11 @@
   ansible.builtin.dnf:
     name: tftp-server
     state: latest
+
 - name: Up tftp-server
   ansible.builtin.systemd_service:
-    name: tftp.service
-    state: reloaded
+    name: tftp
+    state: restarted
     enabled: true
 
 - name: install firewalld
@@ -34,7 +35,7 @@
     name: firewalld
     state: reloaded
 
-######################## dhcpd
+# ######################## dhcpd
 - name: Install dhcp-server
   ansible.builtin.dnf:
     name: dhcp-server
@@ -58,54 +59,51 @@
 
 - name: Up dhcp-server
   ansible.builtin.systemd_service:
-    name: dhcpd.service
-    state: reloaded
+    name: dhcpd
+    state: restarted
     enabled: true
 
-######################## tftpd cfg
+# ######################## tftpd cfg
 
-# rpmdir=/tmp/rpm
 - name: kickstart directory created
   file:
     path: "/tmp/rpm"
     state: directory
 
-- name reinst shim grub
-  ansible.builtin.dnf:
-    name: "{{ item }}"
-    download_dir: /tmp/rpm
-    download_only: yes
-  with_items:
-    - shim
-    - grub2-efi-x64
+# - name: reinst shim grub
+#   ansible.builtin.dnf:
+#     name: "{{ packages }}"
+#     download_only: yes
+#     download_dir: "/tmp/rpm"
+#     state: present
+#   vars:
+#     packages:
+#     - shim
+#     - grub2-efi-x64
 
+- name : install rpm2cpio shim-x64-*.rpm
+  shell: "dnf -y reinstall --downloadonly --downloaddir=/tmp/rpm shim grub2-efi-x64"
 - name : rpm2cpio shim-x64-*.rpm
-  shell: bash -lc "cd /tmp/rpm/ && rpm2cpio shim-x64-*.rpm | cpio -dimv"
+  shell: bash -lc "cd /tmp/rpm && rpm2cpio shim-x64-*.rpm | cpio -dimv"
 - name : rpm2cpio grub2-efi-x64-*.rpm
-  shell: bash -lc "cd /tmp/rpm/ && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv"
+  shell: bash -lc "cd /tmp/rpm && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv"
 
 - name: copy BOOTX64.EFI
   copy:
     src: /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI
-    dest: /var/lib/tftpboot/
+    dest: /var/lib/tftpboot/BOOTX64.EFI
+    mode: '0644'
     force: yes
 
 - name: copy grubx64.efi
   copy:
-    src: "/tmp/rpm/boot/efi/EFI/*/grubx64.efi"
-    dest: /var/lib/tftpboot/
+    src: "/tmp/rpm/boot/efi/EFI/almalinux/grubx64.efi"
+    dest: /var/lib/tftpboot/grubx64.efi
     force: yes
-    # * is distribution name
+    mode: '0644'
+    # need change dir name by distribution
 
-- name: chmod 644
-  file:
-    path: "{{ item }}"
-    mode: "664"
-  with_items:
-    - BOOTX64.EFI
-    - grubx64.efi
-
-- name: Download foo.conf
+- name: Download iso
   ansible.builtin.get_url:
     url: https://ftp.riken.jp/Linux/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso
     dest: /tmp/linux9.iso
@@ -117,11 +115,11 @@
 
 - name: Mount DVD read-only
   ansible.posix.mount:
-    path: /var/pxe/linux9
     src: /tmp/linux9.iso
+    path: /var/pxe/linux9
     fstype: iso9660
-    opts: ro,noauto
-    state: present
+    opts: loop,ro
+    state: mounted
 
 - name: kickstart directory created
   file:
@@ -140,9 +138,9 @@
     dest: /var/lib/tftpboot/linux9
     force: yes
 
-- name: grub.cfg
+- name: copy grub.cfg
   template:
-    src: templates/grub.j2
+    src: templates/grub.cfg.j2
     dest: /var/lib/tftpboot/grub.cfg
 
 ##################### httpd
@@ -167,7 +165,6 @@
   template:
     src: templates/ks.cfg.j2
     dest: /var/www/html/ks/ks.cfg
-
 
 - name: reload firewalld
   service:

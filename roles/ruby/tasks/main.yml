@@ -10,9 +10,10 @@
 
 - name: install some packages for ruby
   ansible.builtin.dnf:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: latest
-  with_items:
+  vars:
+    packages:
     - bzip2
     - gcc
     - openssl-devel

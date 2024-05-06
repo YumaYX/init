@@ -12,10 +12,10 @@ option architecture-type code 93 = unsigned integer 16;
 subnet {{ pxe_network }}0 netmask 255.255.255.0 {
   range dynamic-bootp {{ pxe_network }}200 {{ pxe_network }}250;
   option broadcast-address {{ pxe_network }}255;
-  option routers {{ pxe_network }}2;
+  option routers {{ pxe_network }}{{ pxe_host }};
   class "pxeclients" {
     match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
-    next-server {{ pxe_network }}2;
+    next-server {{ pxe_network }}{{ pxe_host }};
     if option architecture-type = 00:07 {
       filename "BOOTX64.EFI";
     } else {

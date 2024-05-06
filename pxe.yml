@@ -1,0 +1,7 @@
+- hosts: all
+  gather_facts: no
+  vars:
+    pxe_network: 172.17.64.
+    pxe_host: 2
+  roles:
+    - pxe
