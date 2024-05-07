@@ -105,7 +105,7 @@
 
 - name: Download iso
   ansible.builtin.get_url:
-    url: https://ftp.riken.jp/Linux/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso
+    url: https://ftp.riken.jp/Linux/almalinux/9.4/isos/x86_64/AlmaLinux-9-latest-x86_64-minimal.iso
     dest: /tmp/linux9.iso
 
 - name: kickstart directory created
