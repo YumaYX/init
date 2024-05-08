@@ -36,27 +36,33 @@
   become: yes
   become_user: "{{ prime_user }}"
 
-- name: Handle the error
-  block:
-    - name: Check Ruby Install
-      shell: bash -lc "ruby -v"
-  rescue:
-    - name: Ruby Install
-      shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
+- name: Check Ruby Install
+  shell: bash -lc "ruby -v"
+  ignore_errors: yes
   become: yes
   become_user: "{{ prime_user }}"
+  register: command_result
+
+- name: Ruby Install
+  shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
+  become: yes
+  become_user: "{{ prime_user }}"
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
 
 - name: Update Gems
   shell: bash -lc "gem update --system"
   become: yes
   become_user: "{{ prime_user }}"
-  environment:
-    PATH: /home/{{ prime_user }}/.rbenv/shims:{{ ansible_env.PATH }}
+
+- name: Update Gem
+  shell: bash -lc "gem update"
+  become: yes
+  become_user: "{{ prime_user }}"
 
 - name: Install gems
-  community.general.gem:
+  gem:
     name: "{{ item }}"
-    state: present
+    executable: "/home/{{ prime_user}}/.rbenv/shims/gem"
   with_items:
     - rake
     - minitest
@@ -64,5 +70,3 @@
     - rubocop
   become: yes
   become_user: "{{ prime_user }}"
-  environment:
-    PATH: /home/{{ prime_user }}/.rbenv/shims:{{ ansible_env.PATH }}

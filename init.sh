@@ -19,11 +19,7 @@ fi
 
 git clone https://github.com/YumaYX/init.git /tmp/init
 cd /tmp/init \
-    && python3.12 -m venv venv \
-    && source venv/bin/activate \
-    && python3.12 -m pip install -r requirements.txt \
-    && time ansible-playbook -i hosts r.yml -c local \
-    && ansible-playbook -i hosts serverspec.yml -c local
+    && time make all
 
 mv -v /tmp/init /tmp/init.bak$$$(date +%Y%m%d%H%M%S)
 
