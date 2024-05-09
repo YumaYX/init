@@ -18,8 +18,7 @@ if [ -e /tmp/init ]; then
 fi
 
 git clone https://github.com/YumaYX/init.git /tmp/init
-cd /tmp/init \
-    && time make all
+cd /tmp/init && time make all
 
 mv -v /tmp/init /tmp/init.bak$$$(date +%Y%m%d%H%M%S)
 
