@@ -13,9 +13,6 @@
     block: |
       /nfs *(rw,all_squash,async)
 
-- name: Run exportfs -av command
-  command: exportfs -av
-
 - name: Create directory if it doesn't exist
   file:
     path: /nfs
@@ -23,6 +20,9 @@
     owner: nobody
     group: nobody
     mode: '0777'
+
+- name: Run exportfs -av command
+  command: exportfs -av
 
 - name: Enable rpcbind and nfs-server services
   systemd:
