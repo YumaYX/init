@@ -1,0 +1,13 @@
+---
+# tasks file for roles/workspace
+- name: Create directories
+  file:
+    path: "/work/{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - lib
+    - data
+    - output
+    - downloads
+    - sandbox

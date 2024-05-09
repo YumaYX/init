@@ -1,0 +1,50 @@
+---
+# tasks file for roles/nfs
+- name: Install nfs util
+  ansible.builtin.dnf:
+    name: nfs-utils
+    state: latest
+
+- name: add setting to /etc/exports
+  blockinfile:
+    path: /etc/exports
+    marker: "# Ansible {mark}"
+    create: yes
+    block: |
+      /nfs *(rw,all_squash,async)
+
+- name: Run exportfs -av command
+  command: exportfs -av
+
+- name: Create directory if it doesn't exist
+  file:
+    path: /nfs
+    state: directory
+    owner: nobody
+    group: nobody
+    mode: '0777'
+
+- name: Enable rpcbind and nfs-server services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - rpcbind
+    - nfs-server
+
+- name: Open NFS ports in Firewalld
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+  with_items:
+    - nfs
+    - rpc-bind
+    - nfs3
+    - mountd
+
+- name: reload firewalld
+  service:
+    name: firewalld
+    state: reloaded

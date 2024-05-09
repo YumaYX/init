@@ -6,4 +6,5 @@
     - init
     - ruby
     - httpd
-
+    - nfs
+    - workspace
