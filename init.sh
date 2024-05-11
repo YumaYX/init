@@ -11,7 +11,7 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
-dnf -y install python3.12-pip git make
+dnf -y install python3-pip git make
 
 if [ -e /tmp/init ]; then
   mv -v /tmp/init /tmp/init.bak$$$(date +%Y%m%d%H%M%S)

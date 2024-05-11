@@ -4,8 +4,9 @@ default:
 all: install local serverspec
 
 install:
-	python3.12 -m venv venv
-	source venv/bin/activate && pip3.12 install -r requirements.txt --no-cache-dir
+	python3 -m venv venv
+	source venv/bin/activate && pip3 install --upgrade pip
+	source venv/bin/activate && pip3 install --no-cache-dir ansible
 
 update:
 	git status
