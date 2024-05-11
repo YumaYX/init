@@ -1,12 +1,18 @@
+PYTHON := python3
+PIP    := pip3
+
+ACTIVATE  := source venv/bin/activate
+ANSIBLEPB := ansible-playbook -i hosts -c local
+
 default:
-	cat makefile | grep ^[a-z]
+	@cat makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
 
 all: install local serverspec
 
 install:
-	python3 -m venv venv
-	source venv/bin/activate && pip3 install --upgrade pip
-	source venv/bin/activate && pip3 install --no-cache-dir ansible
+	$(PYTHON) -m venv venv
+	$(ACTIVATE) && $(PIP) install --upgrade pip
+	$(ACTIVATE) && $(PIP) install --no-cache-dir ansible
 
 update:
 	git status
@@ -15,12 +21,13 @@ update:
 	git commit -am 'update'
 
 local: install
-	source venv/bin/activate && ansible-playbook -i hosts r.yml -c local
+	$(ACTIVATE) && $(ANSIBLEPB) r.yml
 
 serverspec: install
-	source venv/bin/activate && ansible-playbook -i hosts serverspec.yml -c local
+	$(ACTIVATE) && $(ANSIBLEPB) serverspec.yml
 
 pxe: install
-	source venv/bin/activate && ansible-playbook -i hosts pxe.yml -c local
+	$(ACTIVATE) && $(ANSIBLEPB) pxe.yml
 
 .PHONY: all local serverspec pxe
+
