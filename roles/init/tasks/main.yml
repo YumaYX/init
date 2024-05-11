@@ -1,55 +1,56 @@
 ---
-# Tasks file for NFS role
-- name: Ensure nfs-utils package is installed
+# tasks file for roles/init
+- name: Upgrade all packages
   ansible.builtin.dnf:
-    name: nfs-utils
+    name: "*"
     state: latest
 
-- name: Add settings to /etc/exports
-  blockinfile:
-    path: /etc/exports
-    marker: "# Ansible {mark}"
-    create: yes
-    block: |
-      /nfs *(rw,all_squash,async)
+- name: install tools
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - vim
+    - make
+    - "@development"
 
-- name: Create directory if it doesn't exist
-  file:
-    path: /nfs
-    state: directory
-    owner: nobody
-    group: nobody
-    mode: '0777'
+- name: install firewalld
+  ansible.builtin.dnf:
+    name: "firewalld"
+    state: present
 
-- name: Run exportfs -av command
-  command: exportfs -av
-
-- name: Ensure rpcbind and nfs-server services are enabled and started
-  systemd:
-    name: "{{ item }}"
+- name: start firewalld
+  ansible.builtin.systemd_service:
+    name: "firewalld"
     enabled: yes
     state: started
-  loop:
-    - rpcbind
-    - nfs-server
 
-- name: Open NFS ports in Firewalld
-  firewalld:
-    service: "{{ item }}"
-    state: enabled
-    permanent: true
-  loop:
-    - nfs
-    - rpc-bind
-    - nfs3
-    - mountd
+- name: set hostname
+  ansible.builtin.hostname:
+    name: x.y
 
-- name: Reload Firewalld
-  service:
-    name: firewalld
-    state: reloaded
+- name: Create user
+  user:
+    name: "{{ prime_user }}"
+    shell: /bin/bash
 
-- name: Force systemd to reread configs (version 2.4 and above)
-  ansible.builtin.systemd_service:
-    daemon_reload: true
+- name: sudo
+  template:
+    src: templates/sudo.j2
+    dest: /etc/sudoers.d/{{ prime_user }}
+
+- name: git clone
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/dotfiles.git
+    dest: /home/{{ prime_user }}/dotfiles
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: Run 'install' target as {{ prime_user }}
+  community.general.make:
+    chdir: /home/{{ prime_user }}/dotfiles
+    target: install
+  become: yes
+  become_user: "{{ prime_user }}"
 
