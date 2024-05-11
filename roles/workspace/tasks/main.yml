@@ -1,13 +1,14 @@
 ---
-# tasks file for roles/workspace
-- name: Create directories
+# Tasks file for the workspace role
+- name: Ensure necessary directories exist
   file:
     path: "/work/{{ item }}"
     state: directory
     recurse: yes
-  with_items:
+  loop:
     - lib
     - data
     - output
     - downloads
     - sandbox
+

@@ -1,65 +1,60 @@
 ---
 # tasks file for roles/ruby
-
-# - name: Ensure the crb repository is enabled
-#   community.general.dnf_config_manager:
-#     name: crb
-#     state: enabled
-- name : enable crb
+- name: Ensure CRB repository is enabled
   shell: bash -lc "dnf config-manager --set-enabled crb"
 
-- name: install some packages for ruby
+- name: Install necessary packages for Ruby
   ansible.builtin.dnf:
     name: "{{ packages }}"
     state: latest
   vars:
     packages:
-    - bzip2
-    - gcc
-    - openssl-devel
-    - readline-devel
-    - zlib-devel
-    - libyaml-devel
-    - git
+      - bzip2
+      - gcc
+      - openssl-devel
+      - readline-devel
+      - zlib-devel
+      - libyaml-devel
+      - git
 
-- name: git clone
+- name: Git clone rbenv
   ansible.builtin.git:
     repo: https://github.com/rbenv/rbenv.git
     dest: /home/{{ prime_user }}/.rbenv
   become: yes
   become_user: "{{ prime_user }}"
 
-- name: git clone
+- name: Git clone ruby-build
   ansible.builtin.git:
     repo: https://github.com/rbenv/ruby-build.git
     dest: /home/{{ prime_user }}/.rbenv/plugins/ruby-build
   become: yes
   become_user: "{{ prime_user }}"
 
-- name: Check Ruby Install
+- name: Check Ruby installation
   shell: bash -lc "ruby -v"
   ignore_errors: yes
   become: yes
   become_user: "{{ prime_user }}"
   register: command_result
 
-- name: Ruby Install
+- name: Install Ruby
   shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
   become: yes
   become_user: "{{ prime_user }}"
   when: "('ruby ' + ruby_version) not in command_result.stdout"
 
-- name: Update Gems
+- name: Update Gems system
   shell: bash -lc "gem update --system"
   become: yes
   become_user: "{{ prime_user }}"
 
-- name: Update Gem
+- name: Update Gems
   shell: bash -lc "gem update"
   become: yes
   become_user: "{{ prime_user }}"
 
-- name: Install gems
+- name: Install necessary gems
   gem:
     name: "{{ item }}"
     executable: "/home/{{ prime_user}}/.rbenv/shims/gem"
@@ -70,3 +65,4 @@
     - rubocop
   become: yes
   become_user: "{{ prime_user }}"
+

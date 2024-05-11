@@ -1,6 +1,5 @@
----
-# tasks file for roles/serverspec
-- name: serverspec
+# Tasks file for the Serverspec role
+- name: Run Serverspec tests
   shell: /bin/bash -lc "cd serverspec && rake"
   become: yes
   become_user: "{{ prime_user }}"

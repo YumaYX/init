@@ -13,13 +13,13 @@ update:
 	git add .
 	git commit -am 'update'
 
-local:
+local: install
 	source venv/bin/activate && ansible-playbook -i hosts r.yml -c local
 
-serverspec:
+serverspec: install
 	source venv/bin/activate && ansible-playbook -i hosts serverspec.yml -c local
 
-pxe:
+pxe: install
 	source venv/bin/activate && ansible-playbook -i hosts pxe.yml -c local
 
 .PHONY: all local serverspec pxe

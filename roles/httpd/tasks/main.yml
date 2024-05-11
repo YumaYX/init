@@ -1,26 +1,26 @@
 ---
-# tasks file for roles/httpd
+# Tasks file for managing HTTPD
 
-- name: firewalld for http
+- name: Configure firewalld for HTTP
   ansible.posix.firewalld:
     service: http
-    permanent: true
+    permanent: yes
     state: enabled
 
-- name: reload firewalld
+- name: Reload firewalld
   service:
     name: firewalld
     state: reloaded
 
-- name: install httpd
+- name: Install HTTPD package
   ansible.builtin.dnf:
     name: httpd
     state: latest
 
-- name: Restart httpd service
+- name: Restart HTTPD service
   ansible.builtin.systemd_service:
     name: httpd
     state: restarted
-    enabled: true
-    daemon_reload: true
+    enabled: yes
+    daemon_reload: yes
 
