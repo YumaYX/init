@@ -29,7 +29,7 @@
 
 - name: set hostname
   ansible.builtin.hostname:
-    name: x.y
+    name: y.localdomain
 
 - name: Create user
   user:

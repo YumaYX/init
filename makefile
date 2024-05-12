@@ -24,7 +24,9 @@ local: install
 	$(ACTIVATE) && $(ANSIBLEPB) r.yml
 
 serverspec: install
+	-mount -t nfs -o nfsvers=3 localhost:/nfs /mnt
 	$(ACTIVATE) && $(ANSIBLEPB) serverspec.yml
+	umount /mnt
 
 pxe: install
 	$(ACTIVATE) && $(ANSIBLEPB) pxe.yml

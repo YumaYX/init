@@ -21,8 +21,9 @@
     group: nobody
     mode: '0777'
 
-- name: Run exportfs -av command
-  command: exportfs -av
+- name: Run exportfs -arv command
+  command: exportfs -arv
+  ignore_errors: yes
 
 - name: Enable rpcbind and nfs-server services
   systemd:
