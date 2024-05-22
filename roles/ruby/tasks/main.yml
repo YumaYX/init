@@ -59,10 +59,11 @@
     name: "{{ item }}"
     executable: "/home/{{ prime_user}}/.rbenv/shims/gem"
   with_items:
-    - rake
     - minitest
-    - serverspec
+    - rake
+    - roo
     - rubocop
+    - serverspec
   become: yes
   become_user: "{{ prime_user }}"
 
