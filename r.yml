@@ -1,7 +1,7 @@
 - hosts: all
   vars:
     prime_user: yuma
-    ruby_version: 3.3.0
+    ruby_version: 3.3.3
   roles:
     - init
     - ruby
