@@ -1,3 +1,5 @@
+# init
+
 Ansible Recipe for Red Hat Enterprise Linux-based Distributions: Setting up a Work Environment with PXE Server Configuration, Ruby Installation, and More.
 
 # Install
