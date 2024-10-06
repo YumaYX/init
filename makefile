@@ -28,7 +28,7 @@ pxe: install
 .PHONY: all local test pxe
 
 clean:
-	sudo rm -rf venv
+	rm -rf venv
 
 update:
 	git status
