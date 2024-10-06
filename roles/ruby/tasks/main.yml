@@ -22,24 +22,24 @@
     src: templates/ruby.j2
     dest: /etc/sudoers.d/ruby
 
-# - name: Download
-#   ansible.builtin.get_url:
-#     url: "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-{{ ruby_version }}.tar.gz"
-#     dest: "/tmp/ruby-{{ ruby_version }}.tar.gz"
-# - name: Extract
-#   ansible.builtin.unarchive:
-#     src: "/tmp/ruby-{{ ruby_version }}.tar.gz"
-#     dest: /tmp
-# - name: configure
-#   shell: bash -lc "cd /tmp/ruby-{{ ruby_version }} && ./configure"
-# - name: Build the default target
-#   make:
-#     chdir: "/tmp/ruby-{{ ruby_version }}"
-# - name: Run 'install' target as root
-#   make:
-#     chdir: "/tmp/ruby-{{ ruby_version }}"
-#     target: install
-#   become: yes
+- name: Download
+  ansible.builtin.get_url:
+    url: "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-{{ ruby_version }}.tar.gz"
+    dest: "/tmp/ruby-{{ ruby_version }}.tar.gz"
+- name: Extract
+  ansible.builtin.unarchive:
+    src: "/tmp/ruby-{{ ruby_version }}.tar.gz"
+    dest: /tmp
+- name: configure
+  shell: bash -lc "cd /tmp/ruby-{{ ruby_version }} && ./configure"
+- name: Build the default target
+  make:
+    chdir: "/tmp/ruby-{{ ruby_version }}"
+- name: Run 'install' target as root
+  make:
+    chdir: "/tmp/ruby-{{ ruby_version }}"
+    target: install
+  become: yes
 
 - name: Update Gems system
   shell: bash -lc "/usr/local/bin/gem update --system"
