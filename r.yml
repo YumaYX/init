@@ -1,10 +1,11 @@
 - hosts: all
   vars:
     prime_user: yuma
-    ruby_version: 3.3.3
+    ruby_version: 3.3.5
   roles:
     - init
     - ruby
     - httpd
     - nfs
     - workspace
+    - serverspec

@@ -2,5 +2,4 @@
 - name: Run Serverspec tests
   shell: /bin/bash -lc "cd serverspec && rake"
   become: yes
-  become_user: "{{ prime_user }}"
 

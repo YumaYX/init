@@ -6,7 +6,6 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
-
 dnf -y install python3-pip git make
 
 rm -rf /tmp/init

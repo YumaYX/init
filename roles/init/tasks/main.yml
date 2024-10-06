@@ -5,6 +5,12 @@
     name: "*"
     state: latest
 
+- name: dnf update - cron
+  ansible.builtin.cron:
+    name: "dnf-update-cron"
+    minute: "0"
+    job: "dnf -y update"
+
 - name: install tools
   ansible.builtin.dnf:
     name: "{{ packages }}"
