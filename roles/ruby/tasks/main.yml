@@ -55,6 +55,20 @@
   become: yes
   when: "('ruby ' + ruby_version) not in command_result.stdout"
 
+- name: Change permissions
+  ansible.builtin.file:
+    state: directory
+    recurse: yes
+    path: /usr/local/lib
+    mode: '0757'
+
+- name: Change permissions
+  ansible.builtin.file:
+    state: directory
+    recurse: yes
+    path: /usr/local/bin
+    mode: '0757'
+
 - name: Update Gems system
   shell: bash -lc "/usr/local/bin/gem update --system"
 
