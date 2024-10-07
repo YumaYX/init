@@ -10,5 +10,5 @@ cat << EOF > .r.yml
 EOF
 
 make install
-source venv/bin/activate && ansible-playbook -vv -i localhost, .r.yml -c local
+source venv/bin/activate && ansible-playbook -v -i localhost, .r.yml -c local
 rm -f .r.yml

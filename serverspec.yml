@@ -1,7 +1,5 @@
 - hosts: all
   gather_facts: no
-  vars:
-    prime_user: yuma
   roles:
     - serverspec
 
