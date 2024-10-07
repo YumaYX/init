@@ -22,24 +22,38 @@
     src: templates/ruby.j2
     dest: /etc/sudoers.d/ruby
 
+- name: Check Ruby Install
+  shell: bash -lc "ruby -v"
+  ignore_errors: yes
+  register: command_result
+
 - name: Download
   ansible.builtin.get_url:
     url: "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-{{ ruby_version }}.tar.gz"
     dest: "/tmp/ruby-{{ ruby_version }}.tar.gz"
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
+
 - name: Extract
   ansible.builtin.unarchive:
     src: "/tmp/ruby-{{ ruby_version }}.tar.gz"
     dest: /tmp
-- name: configure
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
+
+- name: Configure
   shell: bash -lc "cd /tmp/ruby-{{ ruby_version }} && ./configure"
-- name: Build the default target
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
+
+- name: make
   make:
     chdir: "/tmp/ruby-{{ ruby_version }}"
-- name: Run 'install' target as root
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
+
+- name: make install
   make:
     chdir: "/tmp/ruby-{{ ruby_version }}"
     target: install
   become: yes
+  when: "('ruby ' + ruby_version) not in command_result.stdout"
 
 - name: Update Gems system
   shell: bash -lc "/usr/local/bin/gem update --system"
