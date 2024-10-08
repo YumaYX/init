@@ -18,9 +18,7 @@ local: install
 	$(ACTIVATE) && $(ANSIBLEPB) r.yml
 
 test: install
-	-mount -t nfs -o nfsvers=3 localhost:/nfs /mnt
 	$(ACTIVATE) && $(ANSIBLEPB) serverspec.yml
-	umount /mnt
 
 pxe: install
 	$(ACTIVATE) && $(ANSIBLEPB) pxe.yml
@@ -35,3 +33,9 @@ update:
 	sleep 5
 	git add .
 	git commit -am 'update'
+
+vagrant:
+	vagrant destroy -f
+	vagrant up --provision
+	vagrant destroy -f
+

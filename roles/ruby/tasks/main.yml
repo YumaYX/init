@@ -17,61 +17,56 @@
       - libyaml-devel
       - git
 
-- name: sudo
-  template:
-    src: templates/ruby.j2
-    dest: /etc/sudoers.d/ruby
+- name: Git clone rbenv
+  ansible.builtin.git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: /home/{{ prime_user }}/.rbenv
+  become: yes
+  become_user: "{{ prime_user }}"
 
-- name: Check Ruby Install
+- name: Git clone ruby-build
+  ansible.builtin.git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: /home/{{ prime_user }}/.rbenv/plugins/ruby-build
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: Check Ruby installation
   shell: bash -lc "ruby -v"
   ignore_errors: yes
+  become: yes
+  become_user: "{{ prime_user }}"
   register: command_result
 
-- name: Download
-  ansible.builtin.get_url:
-    url: "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-{{ ruby_version }}.tar.gz"
-    dest: "/tmp/ruby-{{ ruby_version }}.tar.gz"
-  when: "('ruby ' + ruby_version) not in command_result.stdout"
-
-- name: Extract
-  ansible.builtin.unarchive:
-    src: "/tmp/ruby-{{ ruby_version }}.tar.gz"
-    dest: /tmp
-  when: "('ruby ' + ruby_version) not in command_result.stdout"
-
-- name: Configure
-  shell: bash -lc "cd /tmp/ruby-{{ ruby_version }} && ./configure"
-  when: "('ruby ' + ruby_version) not in command_result.stdout"
-
-- name: make
-  make:
-    chdir: "/tmp/ruby-{{ ruby_version }}"
-  when: "('ruby ' + ruby_version) not in command_result.stdout"
-
-- name: make install
-  make:
-    chdir: "/tmp/ruby-{{ ruby_version }}"
-    target: install
+- name: Install Ruby
+  shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
   become: yes
+  become_user: "{{ prime_user }}"
   when: "('ruby ' + ruby_version) not in command_result.stdout"
 
 - name: Update Gems system
-  shell: bash -lc "/usr/local/bin/gem update --system"
-
-- name: Update Gems
-  shell: bash -lc "/usr/local/bin/gem update"
+  shell: bash -lc "gem update --system"
+  become: yes
+  become_user: "{{ prime_user }}"
 
 - name: Install necessary gems
   gem:
     name: "{{ item }}"
-    executable: /usr/local/bin/gem
+    executable: "/home/{{ prime_user}}/.rbenv/shims/gem"
     user_install: false
   with_items:
+    - bundler
     - minitest
     - rake
     - roo
     - rubocop
-    - serverspec
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: Update Gems
+  shell: bash -lc "gem update"
+  become: yes
+  become_user: "{{ prime_user }}"
 
 - name: gem update - cron
   ansible.builtin.cron:

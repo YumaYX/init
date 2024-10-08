@@ -12,10 +12,16 @@ Ansible Recipe for Red Hat Enterprise Linux-based Distributions: Setting up a Wo
 
 - dot files
 - ruby
+  - dnf(root)
+  - rbenv(user)
 - httpd
 - nfs server
 - workspace
 - pxe server
+
+# Vagrantfile
+
+Vagrantfile for Testing the init
 
 # Version
 
