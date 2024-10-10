@@ -35,7 +35,7 @@ update:
 	git commit -am 'update'
 
 vagrant:
-	vagrant destroy -f
-	vagrant up --provision
+	-vagrant destroy -f
+	-vagrant up --provision
 	vagrant destroy -f
 
