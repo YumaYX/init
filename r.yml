@@ -4,6 +4,7 @@
     ruby_version: 3.3.5
   roles:
     - init
+    - user
     - ruby
     - httpd
     - nfs
