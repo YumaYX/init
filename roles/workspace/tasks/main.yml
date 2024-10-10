@@ -5,6 +5,9 @@
     path: "/work/{{ item }}"
     state: directory
     recurse: yes
+    owner: "{{ prime_user }}"
+    group: "{{ prime_user }}"
+    mode: '0755'
   loop:
     - lib
     - data

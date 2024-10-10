@@ -1,9 +1,9 @@
 # Tasks file for the Serverspec role
 
-# - name: Upgrade all packages
-#   ansible.builtin.dnf:
-#     name: "*"
-#     state: latest
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
 
 - name: install ruby
   ansible.builtin.dnf:
