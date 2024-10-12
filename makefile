@@ -27,6 +27,7 @@ pxe: install
 
 clean:
 	rm -rf venv
+	vagrant destroy -f
 
 update:
 	git status
