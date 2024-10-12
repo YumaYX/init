@@ -17,6 +17,14 @@
       - libyaml-devel
       - git
 
+- name: Install necessary packages for Gem
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+      - libffi-devel
+
 - name: Git clone rbenv
   ansible.builtin.git:
     repo: https://github.com/rbenv/rbenv.git
