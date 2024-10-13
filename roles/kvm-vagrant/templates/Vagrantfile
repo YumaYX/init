@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure('2') do |config|
+  config.vm.box = 'almalinux/9'
+  config.vm.provider 'libvirt' do |vb|
+    vb.memory = 1024 * 1
+    vb.cpus = 2
+  end
+
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+
+  config.vm.define "vmachine" do |server|
+    server.vm.hostname="vm"
+    server.vm.network "private_network", ip: "172.17.64.100"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "Hello!"
+  SHELL
+end
+

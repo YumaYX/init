@@ -1,0 +1,63 @@
+---
+# tasks file for roles/kvm-vagrant
+- name: install yum-utils
+  ansible.builtin.dnf:
+    name: "yum-utils"
+    state: present
+
+- name: Add repository
+  ansible.builtin.yum_repository:
+    name: hashicorp for vagrant
+    description: HASHICORP for Vagrant
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+- name: install tools for kvm + vagrant
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - qemu-kvm
+    - libvirt
+    - virt-install
+    - libvirt-devel
+    - vagrant
+
+- name: start libvirtd
+  ansible.builtin.systemd_service:
+    name: "libvirtd"
+    enabled: yes
+    state: started
+
+- name: Add existing user to the group
+  ansible.builtin.user:
+    name: "{{ prime_user }}"
+    groups: libvirt
+    append: yes
+    state: present
+
+- name: install vagrant-libvirt plugin
+  shell: bash -lc "vagrant plugin install vagrant-libvirt"
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: Vagrantfile
+  ansible.builtin.template:
+    src: templates/Vagrantfile
+    dest: /tmp/Vagrantfile
+
+- name: run virtual machine
+  shell: bash -lc "cd /tmp && vagrant up"
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: stop virtual machine
+  shell: bash -lc "cd /tmp && vagrant destroy -f"
+  become: yes
+  become_user: "{{ prime_user }}"
+
+- name: Delete /tmp/.vagrant
+  ansible.builtin.file:
+    state: absent
+    path: /tmp/.vagrant
+
