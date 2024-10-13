@@ -7,9 +7,9 @@
 
 - name: Add repository
   ansible.builtin.yum_repository:
-    name: hashicorp for vagrant
+    name: hashicorp
     description: HASHICORP for Vagrant
-    baseurl: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
 
 - name: install tools for kvm + vagrant
   ansible.builtin.dnf:
@@ -17,11 +17,12 @@
     state: present
   vars:
     packages:
-    - qemu-kvm
     - libvirt
-    - virt-install
     - libvirt-devel
+    - qemu-kvm
     - vagrant
+    - virt-install
+    - virt-manager
 
 - name: start libvirtd
   ansible.builtin.systemd_service:
@@ -47,12 +48,28 @@
     dest: /tmp/Vagrantfile
 
 - name: run virtual machine
-  shell: bash -lc "cd /tmp && vagrant up"
+  shell: bash -lc "vagrant up"
+  args:
+    chdir: /tmp
   become: yes
   become_user: "{{ prime_user }}"
 
+- name: run virtual machine
+  shell: bash -lc "vagrant ssh -c "whoami""
+  args:
+    chdir: /tmp
+  become: yes
+  become_user: "{{ prime_user }}"
+  register: result
+
+- name: whoami - vagrant
+  assert:
+    that: result.stdout == "vagrant"
+
 - name: stop virtual machine
-  shell: bash -lc "cd /tmp && vagrant destroy -f"
+  shell: bash -lc "vagrant destroy -f"
+  args:
+    chdir: /tmp
   become: yes
   become_user: "{{ prime_user }}"
 
