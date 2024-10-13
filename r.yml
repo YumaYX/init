@@ -17,6 +17,7 @@
     - httpd
     - nfs
     - workspace
-    - serverspec
     - role: kvm-vagrant
       when: virt_check.stdout == "none"
+      ignore_errors: yes
+    - serverspec
