@@ -10,6 +10,8 @@
   ansible.builtin.dnf:
     name: "{{ packages }}"
     state: present
+  vars:
+    packages:
       - vim
       - make
 
