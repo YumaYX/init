@@ -18,6 +18,7 @@ Ansible Recipe for Red Hat Enterprise Linux-based Distributions: Setting up a Wo
 - nfs server
 - workspace
 - kvm+vagrant(only on physical servers)
+- vscode(only on physical servers)
 - pxe server
 
 # Vagrantfile

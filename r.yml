@@ -7,7 +7,7 @@
       ansible.builtin.command: bash -lc "systemd-detect-virt"
       register: virt_check
       ignore_errors: true
-      changed_when: virt_check.rc != 0
+      failed_when: virt_check.rc != 1
 
 - name: Init
   hosts: all
@@ -22,6 +22,9 @@
     - nfs
     - workspace
     - role: kvm
+      when: virt_check.stdout == "none"
+      ignore_errors: true
+    - role: code
       when: virt_check.stdout == "none"
       ignore_errors: true
     - serverspec

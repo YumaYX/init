@@ -1,0 +1,17 @@
+---
+# tasks file for roles/code
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Template a file
+  ansible.builtin.template:
+    src: templates/vscode.repo.j2
+    dest: /etc/yum.repos.d/vscode.repo
+    mode: '0644'
+
+- name: Install VSCode
+  ansible.builtin.dnf:
+    name: code
+    state: present
