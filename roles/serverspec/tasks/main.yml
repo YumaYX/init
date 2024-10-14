@@ -30,6 +30,9 @@
 
 - name: Run Serverspec tests
   ansible.builtin.shell: /bin/bash -lc "cd serverspec && /usr/local/bin/rake"
+  register: result
+  changed_when: result.rc != 0
+
 - name: Unmount NFS share
   ansible.posix.mount:
     path: /mnt

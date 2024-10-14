@@ -38,38 +38,3 @@
   become: true
   become_user: "{{ prime_user }}"
 
-- name: Vagrantfile
-  ansible.builtin.template:
-    src: templates/Vagrantfile
-    dest: /tmp/Vagrantfile
-
-- name: Run virtual machine
-  ansible.builtin.command: bash -lc "vagrant up"
-  args:
-    chdir: /tmp
-  become: true
-  become_user: "{{ prime_user }}"
-
-- name: Run virtual machine
-  ansible.builtin.command: bash -lc "vagrant ssh -c "whoami""
-  args:
-    chdir: /tmp
-  become: true
-  become_user: "{{ prime_user }}"
-  register: result
-
-- name: Whoami - vagrant
-  ansible.builtin.assert:
-    that: result.stdout == "vagrant"
-
-- name: Stop virtual machine
-  ansible.builtin.command: bash -lc "vagrant destroy -f"
-  args:
-    chdir: /tmp
-  become: true
-  become_user: "{{ prime_user }}"
-
-- name: Delete /tmp/.vagrant
-  ansible.builtin.file:
-    state: absent
-    path: /tmp/.vagrant

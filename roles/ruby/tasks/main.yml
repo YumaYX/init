@@ -2,6 +2,9 @@
 # tasks file for roles/ruby
 - name: Ensure CRB repository is enabled
   ansible.builtin.command: bash -lc "dnf config-manager --set-enabled crb"
+  register: result
+  changed_when: result.rc != 0
+
 - name: Install necessary packages for Ruby
   ansible.builtin.dnf:
     name: "{{ packages }}"
