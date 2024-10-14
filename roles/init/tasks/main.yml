@@ -6,6 +6,29 @@
     minute: "0"
     job: dnf -y update
 
+- name: Install vim, make
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+      - vim
+      - make
+
+- name: Install @development
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "@development"
+
+- name: Install @Server with GUI
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "@Server with GUI"
+
 - name: Install tools
   ansible.builtin.dnf:
     name: "{{ packages }}"
@@ -16,6 +39,7 @@
       - make
       - "@development"
       - "@Server with GUI"
+
 
 - name: Install firewalld
   ansible.builtin.dnf:
