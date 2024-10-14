@@ -5,11 +5,8 @@
     name: "yum-utils"
     state: present
 
-- name: Add repository
-  ansible.builtin.yum_repository:
-    name: hashicorp
-    description: HASHICORP for Vagrant
-    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+- name: add hashicorp repo
+  shell: bash -lc "yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
 
 - name: install tools for kvm + vagrant
   ansible.builtin.dnf:
