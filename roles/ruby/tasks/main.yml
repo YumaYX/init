@@ -47,17 +47,22 @@
   become: true
   become_user: "{{ prime_user }}"
   register: command_result
+  changed_when: command_result.rc != 0
 
 - name: Install Ruby
   ansible.builtin.shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
   become: true
   become_user: "{{ prime_user }}"
   when: ('ruby ' + ruby_version) not in command_result.stdout
+  register: result
+  changed_when: result.rc != 0
 
 - name: Update Gems system
   ansible.builtin.command: bash -lc "gem update --system"
   become: true
   become_user: "{{ prime_user }}"
+  register: result
+  changed_when: result.rc != 0
 
 - name: Install necessary gems
   community.general.gem:
@@ -77,6 +82,8 @@
   ansible.builtin.command: bash -lc "gem update"
   become: true
   become_user: "{{ prime_user }}"
+  register: result
+  changed_when: result.rc != 0
 
 - name: Gem update - cron
   ansible.builtin.cron:

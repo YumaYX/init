@@ -72,14 +72,20 @@
 - name: Install and extract RPMs for boot
   ansible.builtin.shell: >
     dnf -y reinstall --downloadonly --downloaddir=/tmp/rpm shim grub2-efi-x64
+  register: result
+  changed_when: result.rc != 0
 
 - name: Extract shim-x64-*.rpm
   ansible.builtin.shell: >
     cd /tmp/rpm && rpm2cpio shim-x64-*.rpm | cpio -dimv
+  register: result
+  changed_when: result.rc != 0
 
 - name: Extract grub2-efi-x64-*.rpm
   ansible.builtin.shell: >
     cd /tmp/rpm && rpm2cpio grub2-efi-x64-*.rpm | cpio -dimv
+  register: result
+  changed_when: result.rc != 0
 
 - name: Copy BOOTX64.EFI
   ansible.builtin.copy:

@@ -7,6 +7,9 @@
 
 - name: Add hashicorp repo
   ansible.builtin.command: bash -lc "yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
+  register: result
+  changed_when: result.rc != 0
+
 - name: Install tools for kvm + vagrant
   ansible.builtin.dnf:
     name: "{{ packages }}"
@@ -37,4 +40,5 @@
   ansible.builtin.command: bash -lc "vagrant plugin install vagrant-libvirt"
   become: true
   become_user: "{{ prime_user }}"
-
+  register: result
+  changed_when: result.rc != 0
