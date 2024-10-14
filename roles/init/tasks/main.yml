@@ -5,35 +5,34 @@
     name: "*"
     state: latest
 
-- name: dnf update - cron
+- name: Dnf update - cron
   ansible.builtin.cron:
-    name: "dnf-update-cron"
+    name: dnf-update-cron
     minute: "0"
-    job: "dnf -y update"
+    job: dnf -y update
 
-- name: install tools
+- name: Install tools
   ansible.builtin.dnf:
     name: "{{ packages }}"
     state: present
   vars:
     packages:
-    - vim
-    - make
-    - "@development"
-    - "@Server with GUI"
+      - vim
+      - make
+      - "@development"
+      - "@Server with GUI"
 
-- name: install firewalld
+- name: Install firewalld
   ansible.builtin.dnf:
-    name: "firewalld"
+    name: firewalld
     state: present
 
-- name: start firewalld
+- name: Start firewalld
   ansible.builtin.systemd_service:
-    name: "firewalld"
-    enabled: yes
+    name: firewalld
+    enabled: true
     state: started
 
-- name: set hostname
+- name: Set hostname
   ansible.builtin.hostname:
     name: y.localdomain
-

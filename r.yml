@@ -1,10 +1,11 @@
+---
 - hosts: all
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Check if the system is virtualized
-      shell: bash -lc "systemd-detect-virt"
+      ansible.builtin.command: bash -lc "systemd-detect-virt"
       register: virt_check
-      ignore_errors: yes
+      ignore_errors: true
 
 - hosts: all
   vars:
@@ -19,5 +20,5 @@
     - workspace
     - role: kvm-vagrant
       when: virt_check.stdout == "none"
-      ignore_errors: yes
+      ignore_errors: true
     - serverspec

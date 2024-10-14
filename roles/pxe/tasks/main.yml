@@ -15,13 +15,13 @@
 
 - name: Install firewalld
   ansible.builtin.dnf:
-    name: "firewalld"
+    name: firewalld
     state: present
 
 - name: Start firewalld
   ansible.builtin.systemd_service:
-    name: "firewalld"
-    enabled: yes
+    name: firewalld
+    enabled: true
     state: started
 
 - name: Configure firewalld for tftp
@@ -66,7 +66,7 @@
 # Tasks for configuring TFTP boot files
 - name: Create kickstart directory
   ansible.builtin.file:
-    path: "/tmp/rpm"
+    path: /tmp/rpm
     state: directory
 
 - name: Install and extract RPMs for boot
@@ -85,15 +85,15 @@
   ansible.builtin.copy:
     src: /tmp/rpm/boot/efi/EFI/BOOT/BOOTX64.EFI
     dest: /var/lib/tftpboot/BOOTX64.EFI
-    mode: '0644'
-    force: yes
+    mode: "0644"
+    force: true
 
 - name: Copy grubx64.efi
   ansible.builtin.copy:
-    src: "/tmp/rpm/boot/efi/EFI/almalinux/grubx64.efi"
+    src: /tmp/rpm/boot/efi/EFI/almalinux/grubx64.efi
     dest: /var/lib/tftpboot/grubx64.efi
-    force: yes
-    mode: '0644'
+    force: true
+    mode: "0644"
 
 - name: Download AlmaLinux ISO
   ansible.builtin.get_url:
@@ -102,7 +102,7 @@
 
 - name: Create directory for AlmaLinux PXE boot
   ansible.builtin.file:
-    path: "/var/pxe/linux9"
+    path: /var/pxe/linux9
     state: directory
 
 - name: Mount AlmaLinux DVD read-only
@@ -115,20 +115,20 @@
 
 - name: Create directory for PXE boot files
   ansible.builtin.file:
-    path: "/var/lib/tftpboot/linux9"
+    path: /var/lib/tftpboot/linux9
     state: directory
 
 - name: Copy vmlinuz
   ansible.builtin.copy:
     src: /var/pxe/linux9/images/pxeboot/vmlinuz
     dest: /var/lib/tftpboot/linux9
-    force: yes
+    force: true
 
 - name: Copy initrd.img
   ansible.builtin.copy:
     src: /var/pxe/linux9/images/pxeboot/initrd.img
     dest: /var/lib/tftpboot/linux9
-    force: yes
+    force: true
 
 - name: Configure grub.cfg
   ansible.builtin.template:
@@ -150,7 +150,7 @@
 
 - name: Create kickstart directory
   ansible.builtin.file:
-    path: "/var/www/html/ks"
+    path: /var/www/html/ks
     state: directory
 
 - name: Configure ks.cfg
@@ -162,4 +162,3 @@
   ansible.builtin.service:
     name: firewalld
     state: reloaded
-

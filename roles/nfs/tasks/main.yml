@@ -5,33 +5,33 @@
     name: nfs-utils
     state: latest
 
-- name: add setting to /etc/exports
-  blockinfile:
+- name: Add setting to /etc/exports
+  ansible.builtin.blockinfile:
     path: /etc/exports
     marker: "# Ansible {mark}"
-    create: yes
+    create: true
     block: |
       /nfs *(rw,all_squash,async)
 
 - name: Create directory if it doesn't exist
-  file:
+  ansible.builtin.file:
     path: /nfs
     state: directory
     owner: nobody
     group: nobody
-    mode: '0777'
+    mode: "0777"
 
 - name: Enable rpcbind and nfs-server services
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
-    enabled: yes
+    enabled: true
     state: started
   with_items:
     - rpcbind
     - nfs-server
 
 - name: Open NFS ports in Firewalld
-  firewalld:
+  ansible.posix.firewalld:
     service: "{{ item }}"
     state: enabled
     permanent: true
@@ -41,8 +41,8 @@
     - nfs3
     - mountd
 
-- name: reload firewalld
-  service:
+- name: Reload firewalld
+  ansible.builtin.service:
     name: firewalld
     state: reloaded
 

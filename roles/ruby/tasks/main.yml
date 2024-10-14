@@ -1,8 +1,7 @@
 ---
 # tasks file for roles/ruby
 - name: Ensure CRB repository is enabled
-  shell: bash -lc "dnf config-manager --set-enabled crb"
-
+  ansible.builtin.command: bash -lc "dnf config-manager --set-enabled crb"
 - name: Install necessary packages for Ruby
   ansible.builtin.dnf:
     name: "{{ packages }}"
@@ -29,38 +28,38 @@
   ansible.builtin.git:
     repo: https://github.com/rbenv/rbenv.git
     dest: /home/{{ prime_user }}/.rbenv
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Git clone ruby-build
   ansible.builtin.git:
     repo: https://github.com/rbenv/ruby-build.git
     dest: /home/{{ prime_user }}/.rbenv/plugins/ruby-build
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Check Ruby installation
-  shell: bash -lc "ruby -v"
-  ignore_errors: yes
-  become: yes
+  ansible.builtin.command: bash -lc "ruby -v"
+  ignore_errors: true
+  become: true
   become_user: "{{ prime_user }}"
   register: command_result
 
 - name: Install Ruby
-  shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
-  become: yes
+  ansible.builtin.shell: /bin/bash -lc "rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
+  become: true
   become_user: "{{ prime_user }}"
-  when: "('ruby ' + ruby_version) not in command_result.stdout"
+  when: ('ruby ' + ruby_version) not in command_result.stdout
 
 - name: Update Gems system
-  shell: bash -lc "gem update --system"
-  become: yes
+  ansible.builtin.command: bash -lc "gem update --system"
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Install necessary gems
-  gem:
+  community.general.gem:
     name: "{{ item }}"
-    executable: "/home/{{ prime_user}}/.rbenv/shims/gem"
+    executable: /home/{{ prime_user }}/.rbenv/shims/gem
     user_install: false
   with_items:
     - bundler
@@ -68,17 +67,16 @@
     - rake
     - roo
     - rubocop
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Update Gems
-  shell: bash -lc "gem update"
-  become: yes
+  ansible.builtin.command: bash -lc "gem update"
+  become: true
   become_user: "{{ prime_user }}"
 
-- name: gem update - cron
+- name: Gem update - cron
   ansible.builtin.cron:
-    name: "gem-update-cron"
+    name: gem-update-cron
     minute: "30"
-    job: "gem update --system && gem update"
-
+    job: gem update --system && gem update

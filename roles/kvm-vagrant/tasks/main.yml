@@ -1,42 +1,41 @@
 ---
 # tasks file for roles/kvm-vagrant
-- name: install yum-utils
+- name: Install yum-utils
   ansible.builtin.dnf:
-    name: "yum-utils"
+    name: yum-utils
     state: present
 
-- name: add hashicorp repo
-  shell: bash -lc "yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
-
-- name: install tools for kvm + vagrant
+- name: Add hashicorp repo
+  ansible.builtin.command: bash -lc "yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"
+- name: Install tools for kvm + vagrant
   ansible.builtin.dnf:
     name: "{{ packages }}"
     state: present
   vars:
     packages:
-    - libvirt
-    - libvirt-devel
-    - qemu-kvm
-    - vagrant
-    - virt-install
-    - virt-manager
+      - libvirt
+      - libvirt-devel
+      - qemu-kvm
+      - vagrant
+      - virt-install
+      - virt-manager
 
-- name: start libvirtd
+- name: Start libvirtd
   ansible.builtin.systemd_service:
-    name: "libvirtd"
-    enabled: yes
+    name: libvirtd
+    enabled: true
     state: started
 
 - name: Add existing user to the group
   ansible.builtin.user:
     name: "{{ prime_user }}"
     groups: libvirt
-    append: yes
+    append: true
     state: present
 
-- name: install vagrant-libvirt plugin
-  shell: bash -lc "vagrant plugin install vagrant-libvirt"
-  become: yes
+- name: Install vagrant-libvirt plugin
+  ansible.builtin.command: bash -lc "vagrant plugin install vagrant-libvirt"
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Vagrantfile
@@ -44,34 +43,33 @@
     src: templates/Vagrantfile
     dest: /tmp/Vagrantfile
 
-- name: run virtual machine
-  shell: bash -lc "vagrant up"
+- name: Run virtual machine
+  ansible.builtin.command: bash -lc "vagrant up"
   args:
     chdir: /tmp
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
 
-- name: run virtual machine
-  shell: bash -lc "vagrant ssh -c "whoami""
+- name: Run virtual machine
+  ansible.builtin.command: bash -lc "vagrant ssh -c "whoami""
   args:
     chdir: /tmp
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
   register: result
 
-- name: whoami - vagrant
-  assert:
+- name: Whoami - vagrant
+  ansible.builtin.assert:
     that: result.stdout == "vagrant"
 
-- name: stop virtual machine
-  shell: bash -lc "vagrant destroy -f"
+- name: Stop virtual machine
+  ansible.builtin.command: bash -lc "vagrant destroy -f"
   args:
     chdir: /tmp
-  become: yes
+  become: true
   become_user: "{{ prime_user }}"
 
 - name: Delete /tmp/.vagrant
   ansible.builtin.file:
     state: absent
     path: /tmp/.vagrant
-

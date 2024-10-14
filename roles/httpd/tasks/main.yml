@@ -4,11 +4,11 @@
 - name: Configure firewalld for HTTP
   ansible.posix.firewalld:
     service: http
-    permanent: yes
+    permanent: true
     state: enabled
 
 - name: Reload firewalld
-  service:
+  ansible.builtin.service:
     name: firewalld
     state: reloaded
 
@@ -21,6 +21,5 @@
   ansible.builtin.systemd_service:
     name: httpd
     state: restarted
-    enabled: yes
-    daemon_reload: yes
-
+    enabled: true
+    daemon_reload: true

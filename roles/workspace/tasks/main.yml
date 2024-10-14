@@ -1,17 +1,16 @@
 ---
 # Tasks file for the workspace role
 - name: Ensure necessary directories exist
-  file:
-    path: "/work/{{ item }}"
+  ansible.builtin.file:
+    path: /work/{{ item }}
     state: directory
-    recurse: yes
+    recurse: true
     owner: "{{ prime_user }}"
     group: "{{ prime_user }}"
-    mode: '0755'
+    mode: "0755"
   loop:
     - lib
     - data
     - output
     - downloads
     - sandbox
-

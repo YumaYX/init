@@ -1,3 +1,4 @@
+---
 # Tasks file for the Serverspec role
 
 - name: Upgrade all packages
@@ -5,32 +6,31 @@
     name: "*"
     state: latest
 
-- name: install ruby
+- name: Install ruby
   ansible.builtin.dnf:
     name: ruby
     state: latest
 
 - name: Install Serverspec
-  gem:
+  community.general.gem:
     name: "{{ item }}"
     executable: /usr/bin/gem
     user_install: false
   with_items:
     - rake
     - serverspec
- 
+
 - name: Mount NFS share
-  mount:
+  ansible.posix.mount:
     path: /mnt
-    src: "localhost:/nfs"
+    src: localhost:/nfs
     fstype: nfs
     opts: nfsvers=3
     state: mounted
 
 - name: Run Serverspec tests
-  shell: /bin/bash -lc "cd serverspec && /usr/local/bin/rake"
-
+  ansible.builtin.shell: /bin/bash -lc "cd serverspec && /usr/local/bin/rake"
 - name: Unmount NFS share
-  mount:
+  ansible.posix.mount:
     path: /mnt
     state: unmounted

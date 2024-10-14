@@ -14,6 +14,9 @@ install:
 	$(ACTIVATE) && $(PIP) install --upgrade pip
 	$(ACTIVATE) && $(PIP) install --no-cache-dir ansible
 
+lint: install
+	$(ACTIVATE) && $(PIP) install ansible-lint
+
 local: install
 	$(ACTIVATE) && $(ANSIBLEPB) r.yml
 
