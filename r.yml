@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Check Env.
+  hosts: all
   gather_facts: false
   tasks:
     - name: Check if the system is virtualized
@@ -7,7 +8,8 @@
       register: virt_check
       ignore_errors: true
 
-- hosts: all
+- name: Init
+  hosts: all
   vars:
     prime_user: yuma
     ruby_version: 3.3.5

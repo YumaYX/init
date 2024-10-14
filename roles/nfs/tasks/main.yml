@@ -3,7 +3,7 @@
 - name: Install nfs util
   ansible.builtin.dnf:
     name: nfs-utils
-    state: latest
+    state: present
 
 - name: Add setting to /etc/exports
   ansible.builtin.blockinfile:

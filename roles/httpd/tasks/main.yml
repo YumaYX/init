@@ -15,7 +15,7 @@
 - name: Install HTTPD package
   ansible.builtin.dnf:
     name: httpd
-    state: latest
+    state: present
 
 - name: Restart HTTPD service
   ansible.builtin.systemd_service:

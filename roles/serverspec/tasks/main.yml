@@ -9,7 +9,7 @@
 - name: Install ruby
   ansible.builtin.dnf:
     name: ruby
-    state: latest
+    state: present
 
 - name: Install Serverspec
   community.general.gem:

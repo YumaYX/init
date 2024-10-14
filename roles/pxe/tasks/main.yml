@@ -5,7 +5,7 @@
 - name: Install tftp-server
   ansible.builtin.dnf:
     name: tftp-server
-    state: latest
+    state: present
 
 - name: Start tftp-server
   ansible.builtin.systemd_service:
@@ -39,7 +39,7 @@
 - name: Install dhcp-server
   ansible.builtin.dnf:
     name: dhcp-server
-    state: latest
+    state: present
 
 - name: Configure dhcpd.conf
   ansible.builtin.template:
