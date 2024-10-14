@@ -2,3 +2,5 @@ skip_list:
  - latest[git]
  - risky-file-permissions
  - risky-shell-pipe
+
+parseable: true

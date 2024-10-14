@@ -11,7 +11,7 @@ all: install local test
 
 install:
 	$(PYTHON) -m venv venv
-	$(ACTIVATE) && $(PIP) install --upgrade pip
+	$(ACTIVATE) && $(PIP) install --upgrade pip ansible-lint
 	$(ACTIVATE) && $(PIP) install --no-cache-dir ansible
 
 lint:
