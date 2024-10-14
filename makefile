@@ -16,6 +16,7 @@ install:
 
 lint: install
 	$(ACTIVATE) && $(PIP) install ansible-lint
+	$(ACTIVATE) && ansible-lint
 
 local: install
 	$(ACTIVATE) && $(ANSIBLEPB) r.yml

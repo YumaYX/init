@@ -5,7 +5,7 @@
 - name: Install necessary packages for Ruby
   ansible.builtin.dnf:
     name: "{{ packages }}"
-    state: latest
+    state: present
   vars:
     packages:
       - bzip2
@@ -19,7 +19,7 @@
 - name: Install necessary packages for Gem
   ansible.builtin.dnf:
     name: "{{ packages }}"
-    state: latest
+    state: present
   vars:
     packages:
       - libffi-devel
