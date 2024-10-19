@@ -6,4 +6,5 @@
     pxe_network: 172.17.64.
     pxe_host: 2
   roles:
+    - httpd
     - pxe
