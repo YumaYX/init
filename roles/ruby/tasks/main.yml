@@ -90,3 +90,4 @@
     name: gem-update-cron
     minute: "30"
     job: gem update --system && gem update
+    user: "{{ prime_user }}"
