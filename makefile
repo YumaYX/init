@@ -7,7 +7,7 @@ ANSIBLEPB := ansible-playbook -i localhost, -c local
 default:
 	@cat makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
 
-all: install local test
+all: install local
 
 install:
 	$(PYTHON) -m venv venv
