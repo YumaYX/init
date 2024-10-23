@@ -9,7 +9,7 @@
   ansible.builtin.template:
     src: templates/vscode.repo.j2
     dest: /etc/yum.repos.d/vscode.repo
-    mode: '0644'
+    mode: "0644"
 
 - name: Install VSCode
   ansible.builtin.dnf:

@@ -1,0 +1,5 @@
+---
+# tasks file for roles/more
+- name: Install Chrome
+  ansible.builtin.command: /bin/bash -lc "dnf -y install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm"
+  become: true

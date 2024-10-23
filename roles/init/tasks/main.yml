@@ -42,7 +42,6 @@
       - "@development"
       - "@Server with GUI"
 
-
 - name: Install firewalld
   ansible.builtin.dnf:
     name: firewalld

@@ -27,4 +27,6 @@
     - role: code
       when: virt_check.stdout == "none"
       ignore_errors: true
+    - role: more
+      ignore_errors: true
     - serverspec
