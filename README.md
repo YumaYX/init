@@ -10,7 +10,7 @@ run the following command as root on Red Hat Enterprise Linux-based Distribution
 curl -fsSL https://raw.githubusercontent.com/YumaYX/init/main/init.sh | sudo sh
 ```
 
-or `curl -L bit.ly/startinit | sudo sh`
+or `curl -L bit.ly/startinit | sh`
 
 # Functions
 
