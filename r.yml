@@ -12,7 +12,7 @@
 - name: Init
   hosts: all
   vars:
-    prime_user: yuma
+    prime_user: user
     ruby_version: 3.3.6
   roles:
     - init
