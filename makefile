@@ -2,7 +2,7 @@ PYTHON := python3
 PIP    := pip3
 
 ACTIVATE  := source venv/bin/activate
-ANSIBLEPB := ansible-playbook -i localhost, -c local
+ANSIBLEPB := LANG=C ansible-playbook -i localhost, -c local
 
 default:
 	@cat makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
