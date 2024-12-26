@@ -13,7 +13,7 @@
   hosts: all
   vars:
     prime_user: user
-    ruby_version: 3.3.6
+    ruby_version: 3.4.1
   roles:
     - init
     - user
