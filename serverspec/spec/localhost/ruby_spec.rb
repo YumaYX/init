@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe command('sudo su - user -c "ruby -v"') do
-  its(:stdout) { should match /^ruby 3\.3\./ }
+  its(:stdout) { should match /^ruby 3\.4\./ }
 end
 
 describe 'Check if gems are installed' do
