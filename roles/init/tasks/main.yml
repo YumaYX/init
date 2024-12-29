@@ -19,6 +19,7 @@
       - firewalld
       - make
       - vim
+      - jq
       - "@development"
       - "@Server with GUI"
 
