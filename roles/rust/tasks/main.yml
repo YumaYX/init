@@ -12,4 +12,4 @@
   ansible.builtin.shell: /bin/bash -lc "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y  --no-modify-path"
   become: true
   become_user: "{{ prime_user }}"
-
+  changed_when: result.rc != 0
