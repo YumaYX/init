@@ -18,6 +18,7 @@
     - init
     - user
     - ruby
+    - rust
     - httpd
     - nfs
     - workspace
