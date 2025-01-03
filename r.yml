@@ -14,7 +14,6 @@
   vars:
     prime_user: user
     ruby_version: 3.4.1
-    no_skip: true
   roles:
     - init
     - user
