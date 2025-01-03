@@ -78,6 +78,7 @@
     - rake
     - roo
     - rubocop
+    - rails
     - activerecord
     - sqlite3
   become: true
