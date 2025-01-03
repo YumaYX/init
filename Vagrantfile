@@ -3,7 +3,7 @@
 
 Vagrant.configure('2') do |config|
   config.vm.box = 'almalinux/9'
-  config.vm.provider 'libvirt' do |vb|
+  config.vm.provider (RUBY_PLATFORM =~ /darwin/ ? 'vmware_desktop' : 'libvirt') do |vb|
     vb.memory = 2048
     vb.cpus = 4
   end
