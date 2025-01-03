@@ -20,8 +20,16 @@
       - make
       - vim
       - jq
+
+- name: Install Group pkgs
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
       - "@development"
       - "@Server with GUI"
+  when: no_skip
 
 - name: Start firewalld
   ansible.builtin.systemd_service:
