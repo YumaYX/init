@@ -78,6 +78,8 @@
     - rake
     - roo
     - rubocop
+    - activerecord
+    - sqlite3
   become: true
   become_user: "{{ prime_user }}"
 
