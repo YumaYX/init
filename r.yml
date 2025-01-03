@@ -7,7 +7,7 @@
       ansible.builtin.command: bash -lc "systemd-detect-virt"
       register: virt_check
       ignore_errors: true
-      failed_when: virt_check.rc != 1
+      failed_when: false
 
 - name: Init
   hosts: all

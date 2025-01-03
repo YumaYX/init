@@ -50,6 +50,7 @@
   become_user: "{{ prime_user }}"
   register: command_result
   changed_when: command_result.rc != 0
+  failed_when: false
 
 - name: Install Ruby
   ansible.builtin.shell: /bin/bash -lc "CONFIGURE_OPTS='--disable-install-doc' rbenv install {{ ruby_version }} && rbenv global {{ ruby_version }}"
