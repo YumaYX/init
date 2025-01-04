@@ -42,6 +42,7 @@
   ignore_errors: true
   become: true
   become_user: "{{ prime_user }}"
+  failed_when: false
 
 - name: Install vagrant-libvirt if not present
   ansible.builtin.command: bash -lc "vagrant plugin install vagrant-libvirt"
