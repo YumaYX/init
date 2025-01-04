@@ -12,16 +12,15 @@
 
 - name: Install tools
   ansible.builtin.dnf:
-    name: "{{ packages }}"
+    name: "{{ item }}"
     state: present
-  vars:
-    packages:
-      - firewalld
-      - make
-      - vim
-      - jq
-      - "@development"
-      - "@Server with GUI"
+  with_items:
+    - firewalld
+    - make
+    - vim
+    - jq
+    - "@development"
+    - "@Server with GUI"
 
 - name: Start firewalld
   ansible.builtin.systemd_service:
