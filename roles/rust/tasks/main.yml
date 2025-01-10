@@ -13,3 +13,18 @@
   become: true
   become_user: "{{ prime_user }}"
   changed_when: result.rc != 0
+
+- name: Git clone # noqa latest[git]
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/rin.git
+    dest: /home/{{ prime_user }}/rin
+  become: true
+  become_user: "{{ prime_user }}"
+
+- name: install rin
+  ansible.builtin.command: bash -lc "cd /home/{{ prime_user }}/rin && make"
+  register: result
+  changed_when: result.rc != 0
+  become: true
+  become_user: "{{ prime_user }}"
+  ignore_errors: true
