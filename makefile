@@ -32,6 +32,9 @@ test: install
 pxe: install
 	$(ACTIVATE) && $(ANSIBLEPB) pxe.yml
 
+justup:
+	vagrant up --no-provision
+
 .PHONY: all local test pxe
 
 clean:
