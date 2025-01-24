@@ -34,6 +34,7 @@ installation of the following features
 ## option
 
 - pxe server
+- Relax-and-Recover
 
 # Vagrantfile
 
