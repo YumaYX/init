@@ -13,14 +13,14 @@
   hosts: all
   vars:
     prime_user: user
-    ruby_version: 3.4.1
+    ruby_version: 3.4.2
   roles:
     - init
     - user
     - ruby
     - rust
     - httpd
-    - nfs
+    - samba
     - workspace
     - role: kvm
       when: virt_check.stdout == "none"
