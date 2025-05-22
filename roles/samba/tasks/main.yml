@@ -1,0 +1,133 @@
+---
+# tasks file for roles/samba
+- name: Install firewalld
+  dnf:
+    name: firewalld
+    state: present
+
+- name: Enable and start firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+
+- name: Allow Samba service in firewalld permanently
+  firewalld:
+    service: samba
+    permanent: yes
+    state: enabled
+    immediate: yes
+    zone: public
+
+- name: Install Samba packages
+  dnf:
+    name:
+      - samba
+      - samba-common
+    state: present
+
+- name: Backup original smb.conf
+  copy:
+    src: /etc/samba/smb.conf
+    dest: /etc/samba/smb.conf.bak
+    remote_src: yes
+    backup: yes
+
+
+
+
+- name: Ensure share directory exists
+  file:
+    path: /samba/share
+    state: directory
+    owner: "{{ prime_user }}"
+    group: "{{ prime_user }}"
+    mode: '0755'
+
+- name: Write custom smb.conf
+  copy:
+    dest: /etc/samba/smb.conf
+    content: |
+      [global]
+      security = user
+      map to guest = Bad User
+      netbios name = linux
+      #hosts allow = 192.168.11. 127.
+      mangled names = no
+      vfs objects = catia
+      catia:mappings = 0x22:0xa8,0x2a:0xa4,0x2f:0xf8,0x3a:0xf7,0x3c:0xab,0x3e:0xbb,0x3f:0xbf,0x5c:0xff,0x7c:0xa6
+      unix charset = UTF-8
+      dos charset = cp932
+      read only = no
+      writeable = yes
+      force create mode = 0644
+      force directory mode = 0755
+      passdb backend = tdbsam
+
+      [Share]
+      path = /samba/share
+      valid users = {{ prime_user }}
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure {{ prime_user }} user exists on system
+  user:
+    name: "{{ prime_user }}"
+    state: present
+
+- name: Fetch users
+  command: /usr/bin/pdbedit -L
+  register: pdb_users
+
+- name: Set Samba password for {{ prime_user }}
+  shell: (echo '{{ prime_user }}'; echo '{{ prime_user }}') | /usr/bin/smbpasswd -s -a "{{ prime_user}}"
+  when: pdb_users.stdout.find(prime_user) == -1
+
+#- name: Set Samba password for {{ prime_user }}
+#  become: yes
+#  expect:
+#    command: smbpasswd -a -s {{ prime_user }}
+#    responses:
+#      .*password.: "{{ prime_user }}"
+  #no_log: true
+
+
+- name: Install required SELinux tools
+  dnf:
+    name: policycoreutils-python-utils
+    state: present
+
+- name: Create Samba share directory with proper permissions
+  file:
+    path: /samba/share
+    state: directory
+    owner: nobody
+    group: nobody
+    mode: '0777'
+
+- name: Set SELinux context for Samba share
+  sefcontext:
+    target: "/samba/share(/.*)?"
+    setype: samba_share_t
+    state: present
+
+- name: Apply SELinux context to share directory
+  command: restorecon -Rv /samba
+
+- name: Enable smb and nmb services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  loop:
+    - smb
+    - nmb
+
+- name: Restart smb and nmb services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - smb
+    - nmb
+

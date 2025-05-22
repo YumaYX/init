@@ -24,7 +24,7 @@ installation of the following features
 - python for Ansible
 - workspace
 - web server(httpd)
-- nfs server
+- samba server
 
 ## on physical servers
 

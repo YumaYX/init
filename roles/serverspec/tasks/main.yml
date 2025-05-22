@@ -14,12 +14,12 @@
     - rake
     - serverspec
 
-- name: Mount NFS share
+- name: Mount Samba share on /mnt
   ansible.posix.mount:
     path: /mnt
-    src: localhost:/nfs
-    fstype: nfs
-    opts: nfsvers=3
+    src: "//localhost/share"
+    fstype: cifs
+    opts: username=user,password=user,iocharset=utf8
     state: mounted
 
 - name: Run Serverspec tests
@@ -27,7 +27,7 @@
   register: result
   changed_when: result.rc != 0
 
-- name: Unmount NFS share
+- name: Unmount smb share
   ansible.posix.mount:
     path: /mnt
     state: unmounted
