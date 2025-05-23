@@ -24,6 +24,7 @@
     name:
       - samba
       - samba-common
+      - cifs-utils
     state: present
 
 - name: Backup original smb.conf
@@ -32,9 +33,6 @@
     dest: /etc/samba/smb.conf.bak
     remote_src: yes
     backup: yes
-
-
-
 
 - name: Ensure share directory exists
   file:
@@ -83,15 +81,6 @@
 - name: Set Samba password for {{ prime_user }}
   shell: (echo '{{ prime_user }}'; echo '{{ prime_user }}') | /usr/bin/smbpasswd -s -a "{{ prime_user}}"
   when: pdb_users.stdout.find(prime_user) == -1
-
-#- name: Set Samba password for {{ prime_user }}
-#  become: yes
-#  expect:
-#    command: smbpasswd -a -s {{ prime_user }}
-#    responses:
-#      .*password.: "{{ prime_user }}"
-  #no_log: true
-
 
 - name: Install required SELinux tools
   dnf:
