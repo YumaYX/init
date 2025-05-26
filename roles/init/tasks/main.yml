@@ -9,6 +9,7 @@
     name: "{{ packages }}"
     state: absent
     autoremove: yes
+  ignore_errors: true
   vars:
     packages:
     - cockpit*
