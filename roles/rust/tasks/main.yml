@@ -13,4 +13,3 @@
   become: true
   become_user: "{{ prime_user }}"
   changed_when: result.rc != 0
-

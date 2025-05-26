@@ -1,26 +1,26 @@
 ---
 # tasks file for roles/samba
 - name: Install firewalld
-  dnf:
+  ansible.builtin.dnf:
     name: firewalld
     state: present
 
 - name: Enable and start firewalld
-  systemd:
+  ansible.builtin.systemd:
     name: firewalld
-    enabled: yes
+    enabled: true
     state: started
 
 - name: Allow Samba service in firewalld permanently
-  firewalld:
+  ansible.posix.firewalld:
     service: samba
-    permanent: yes
+    permanent: true
     state: enabled
-    immediate: yes
+    immediate: true
     zone: public
 
 - name: Install Samba packages
-  dnf:
+  ansible.builtin.dnf:
     name:
       - samba
       - samba-common
@@ -28,22 +28,22 @@
     state: present
 
 - name: Backup original smb.conf
-  copy:
+  ansible.builtin.copy:
     src: /etc/samba/smb.conf
     dest: /etc/samba/smb.conf.bak
-    remote_src: yes
-    backup: yes
+    remote_src: true
+    backup: true
 
 - name: Ensure share directory exists
-  file:
+  ansible.builtin.file:
     path: /samba/share
     state: directory
     owner: "{{ prime_user }}"
     group: "{{ prime_user }}"
-    mode: '0755'
+    mode: "0755"
 
 - name: Write custom smb.conf
-  copy:
+  ansible.builtin.copy:
     dest: /etc/samba/smb.conf
     content: |
       [global]
@@ -67,56 +67,54 @@
       valid users = {{ prime_user }}
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Ensure {{ prime_user }} user exists on system
-  user:
+  ansible.builtin.user:
     name: "{{ prime_user }}"
     state: present
 
 - name: Fetch users
-  command: /usr/bin/pdbedit -L
+  ansible.builtin.command: /usr/bin/pdbedit -L
   register: pdb_users
 
 - name: Set Samba password for {{ prime_user }}
-  shell: (echo '{{ prime_user }}'; echo '{{ prime_user }}') | /usr/bin/smbpasswd -s -a "{{ prime_user}}"
+  ansible.builtin.shell: (echo '{{ prime_user }}'; echo '{{ prime_user }}') | /usr/bin/smbpasswd -s -a "{{ prime_user}}"
   when: pdb_users.stdout.find(prime_user) == -1
 
 - name: Install required SELinux tools
-  dnf:
+  ansible.builtin.dnf:
     name: policycoreutils-python-utils
     state: present
 
 - name: Create Samba share directory with proper permissions
-  file:
+  ansible.builtin.file:
     path: /samba/share
     state: directory
     owner: nobody
     group: nobody
-    mode: '0777'
+    mode: "0777"
 
 - name: Set SELinux context for Samba share
-  sefcontext:
-    target: "/samba/share(/.*)?"
+  community.general.sefcontext:
+    target: /samba/share(/.*)?
     setype: samba_share_t
     state: present
 
 - name: Apply SELinux context to share directory
-  command: restorecon -Rv /samba
-
+  ansible.builtin.command: restorecon -Rv /samba
 - name: Enable smb and nmb services
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
-    enabled: yes
+    enabled: true
   loop:
     - smb
     - nmb
 
 - name: Restart smb and nmb services
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
     state: restarted
   loop:
     - smb
     - nmb
-
