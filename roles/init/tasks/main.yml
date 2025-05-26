@@ -4,6 +4,20 @@
   ansible.builtin.hostname:
     name: y.localdomain
 
+- name: Uninstall Packages
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: absent
+    autoremove: yes
+  vars:
+    packages:
+    - cockpit*
+    - cups
+    - avahi*
+    - traceroute
+    - telnet
+    - nano
+
 - name: Dnf update - cron
   ansible.builtin.cron:
     name: dnf-update-cron
