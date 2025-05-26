@@ -8,16 +8,16 @@
   ansible.builtin.dnf:
     name: "{{ packages }}"
     state: absent
-    autoremove: yes
+    autoremove: true
   ignore_errors: true
   vars:
     packages:
-    - cockpit*
-    - cups
-    - avahi*
-    - traceroute
-    - telnet
-    - nano
+      - cockpit*
+      - cups
+      - avahi*
+      - traceroute
+      - telnet
+      - nano
 
 - name: Dnf update - cron
   ansible.builtin.cron:

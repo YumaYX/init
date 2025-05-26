@@ -37,7 +37,7 @@
     state: present
 
 - name: Check if vagrant-libvirt is already installed
-  shell: vagrant plugin list | grep vagrant-libvirt
+  ansible.builtin.shell: vagrant plugin list | grep vagrant-libvirt
   register: vagrant_libvirt_check
   ignore_errors: true
   become: true
