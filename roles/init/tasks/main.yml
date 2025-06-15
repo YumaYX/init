@@ -19,6 +19,13 @@
       - telnet
       - nano
 
+- name: Set max_parallel_downloads
+  ansible.builtin.ini_file:
+    path: /etc/dnf/dnf.conf
+    section: main
+    option: max_parallel_downloads
+    value: '10'
+
 - name: Dnf update - cron
   ansible.builtin.cron:
     name: dnf-update-cron
