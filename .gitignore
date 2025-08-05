@@ -4,3 +4,4 @@ venv/
 .venv/
 .vagrant/
 .r.yml
+uv.lock
