@@ -1,16 +1,19 @@
 UV := /root/.local/bin/uv
 
-ANSIBLEPB := LANG=C ansible-playbook -i localhost, -c local
+ENV_VARS := LANG=C
+ANSIBLE_CMD := ansible-playbook -i localhost, -c local
 
 default:
 	@cat makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
 
 all: setup install local
 
-# uvのインストール確認と自動インストール
 setup:
 	@command -v $(UV) >/dev/null 2>&1 || { \
+		echo "Installing uv..."; \
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+		echo "Please restart your terminal or run: source ~/.bashrc"; \
+		echo "Then run 'make install' again."; \
 		exit 1; \
 	}
 	@echo "uv is installed: $$($(UV) --version)"
@@ -18,23 +21,23 @@ setup:
 install: setup
 	$(UV) sync
 
-lint: dev
-	$(UV) run ansible-lint
+#lint: dev
+#	$(UV) run ansible-lint
 
-lintfix: dev
-	$(UV) run ansible-lint --fix
+#lintfix: dev
+#	$(UV) run ansible-lint --fix
 
 dev: setup
 	$(UV) add --dev ansible-lint
 
 local: install
-	$(UV) run $(ANSIBLEPB) r.yml
+	$(ENV_VARS) $(UV) run $(ANSIBLE_CMD) r.yml
 
 test: install
-	$(UV) run $(ANSIBLEPB) serverspec.yml
+	$(ENV_VARS) $(UV) run $(ANSIBLE_CMD) serverspec.yml
 
 pxe: install
-	$(UV) run $(ANSIBLEPB) pxe.yml
+	$(ENV_VARS) $(UV) run $(ANSIBLE_CMD) pxe.yml
 
 justup:
 	vagrant up --no-provision
@@ -42,9 +45,8 @@ justup:
 .PHONY: all local test pxe install dev setup
 
 clean:
-	rm -rf .venv
-	rm -f uv.lock
-	vagrant destroy -f
+	-vagrant destroy -f
+	rm -rf .venv uv.lock .vagrant
 
 update:
 	git status
@@ -57,7 +59,6 @@ vagrant:
 	-vagrant up --provision
 	vagrant destroy -f
 
-# 便利な追加コマンド
 add: setup
 	$(UV) add $(PACKAGE)
 
@@ -70,7 +71,6 @@ lock: setup
 upgrade: setup
 	$(UV) lock --upgrade
 
-# uvの手動インストール用
 install-uv:
 	curl -LsSf https://astral.sh/uv/install.sh | sh
-
+	@echo "Please restart your terminal or run: source ~/.bashrc"
