@@ -14,3 +14,13 @@
     name: google-chrome-stable
     state: present
 
+- name: Download and install Ollama
+  shell: |
+      curl -fsSL https://ollama.com/install.sh | sh
+- name: Enable and start Ollama service
+  systemd:
+    name: ollama
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
