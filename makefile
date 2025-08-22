@@ -14,7 +14,6 @@ setup:
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
 		echo "Please restart your terminal or run: source ~/.bashrc"; \
 		echo "Then run 'make install' again."; \
-		exit 1; \
 	}
 	@echo "uv is installed: $$($(UV) --version)"
 
