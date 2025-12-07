@@ -44,6 +44,7 @@ justup:
 .PHONY: all local test pxe install dev setup
 
 clean:
+	sudo date
 	-vagrant destroy -f
 	sudo rm -rf .venv uv.lock .vagrant
 
