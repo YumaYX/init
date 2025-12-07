@@ -15,5 +15,5 @@ describe 'Check if gems are installed' do
 end
 
 describe cron do
-  it { should have_entry('30 * * * * gem update --system && gem update').with_user('user') }
+  it { should have_entry('0 18 * * 5 /usr/local/bin/update-rubygems').with_user('user') }
 end

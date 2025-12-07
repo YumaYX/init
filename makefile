@@ -45,7 +45,7 @@ justup:
 
 clean:
 	-vagrant destroy -f
-	rm -rf .venv uv.lock .vagrant
+	sudo rm -rf .venv uv.lock .vagrant
 
 update:
 	git status
@@ -53,7 +53,7 @@ update:
 	git add .
 	git commit -am 'update'
 
-vagrant:
+vagrant: clean
 	-vagrant destroy -f
 	-vagrant up --provision
 	vagrant destroy -f
