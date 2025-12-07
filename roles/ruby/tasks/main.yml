@@ -21,6 +21,14 @@
       - rust
       - cargo
 
+- name: Install extra packages for Ruby
+  ansible.builtin.dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - ruby-devel
+
 - name: Install necessary packages for Gem
   ansible.builtin.dnf:
     name: "{{ packages }}"
