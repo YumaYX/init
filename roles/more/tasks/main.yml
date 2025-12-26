@@ -24,3 +24,16 @@
     state: started
     daemon_reload: yes
 
+- name: Git clone # noqa latest[git]
+  ansible.builtin.git:
+    repo: https://github.com/YumaYX/terminal-design.git
+    dest: /home/{{ prime_user }}/terminal-design
+  become: true
+  become_user: "{{ prime_user }}"
+
+- name: Run 'load' target as {{ prime_user }}
+  community.general.make:
+    chdir: /home/{{ prime_user }}/terminal-design
+    target: load
+  become: true
+  become_user: "{{ prime_user }}"
