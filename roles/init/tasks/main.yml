@@ -4,20 +4,20 @@
   ansible.builtin.hostname:
     name: y.localdomain
 
-- name: Uninstall Packages
-  ansible.builtin.dnf:
-    name: "{{ packages }}"
-    state: absent
-    autoremove: true
-  ignore_errors: true
-  vars:
-    packages:
-      - cockpit*
-      - cups
-      - avahi*
-      - traceroute
-      - telnet
-      - nano
+#- name: Uninstall Packages
+#  ansible.builtin.dnf:
+#    name: "{{ packages }}"
+#    state: absent
+#    autoremove: true
+#  ignore_errors: true
+#  vars:
+#    packages:
+#      - cockpit*
+#      - cups
+#      - avahi*
+#      - traceroute
+#      - telnet
+#      - nano
 
 - name: Set fastestmirror
   ansible.builtin.ini_file:
@@ -48,8 +48,16 @@
     - make
     - vim
     - jq
-    - "@development"
-    - "@Server with GUI"
+#    - "@development"
+#    - "@Server with GUI"
+
+- name: Install package group via yum
+  ansible.builtin.shell: |
+    yum -y groupinstall "Development Tools"
+
+- name: Install Server with GUI
+  ansible.builtin.shell: |
+    dnf -y groupinstall "Server with GUI"
 
 - name: Start firewalld
   ansible.builtin.systemd_service:
