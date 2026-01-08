@@ -56,7 +56,7 @@
 
 - name: Install package group via yum
   ansible.builtin.shell: |
-    yum -y groupinstall "Development Tools"
+    dnf -y groupinstall "Development Tools"
 
 - name: Install Server with GUI
   ansible.builtin.shell: |
