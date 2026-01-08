@@ -37,6 +37,7 @@
   ansible.builtin.cron:
     name: dnf-update-cron
     minute: "0"
+    hour: "4"
     job: dnf -y update
 
 - name: Install tools
