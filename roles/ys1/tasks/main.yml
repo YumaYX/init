@@ -4,6 +4,7 @@
   ansible.builtin.git:
     repo: https://github.com/YumaYX/YS1.git
     dest: /work/downloads/YS1
+    force: yes
   become: true
   become_user: "{{ prime_user }}"
 
