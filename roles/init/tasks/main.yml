@@ -50,11 +50,10 @@
     - vim
     - jq
     - cronie
-    - yum
 #    - "@development"
 #    - "@Server with GUI"
 
-- name: Install package group via yum
+- name: Install package group
   ansible.builtin.shell: |
     dnf -y groupinstall "Development Tools"
 
