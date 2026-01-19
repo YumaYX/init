@@ -5,7 +5,7 @@ ANSIBLE_CMD := ansible-playbook -i localhost, -c local
 .PHONY: default all install local test pxe vagrant clean
 
 default:
-	@cat makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
+	@cat Makefile | grep ^[a-z] | sort | sed 's/^/make /g;s/:.*//g'
 
 
 all: install local
