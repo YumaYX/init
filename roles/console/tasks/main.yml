@@ -1,0 +1,15 @@
+---
+# tasks file for roles/console
+- name: /etc/vconsole.conf - fond
+  ansible.builtin.lineinfile:
+    path: /etc/vconsole.conf
+    regexp: '^FONT='
+    line: 'FONT="latarcyrheb-sun32"'
+    state: present
+    create: yes
+
+- name: restart systemd-vconsole-setup
+  ansible.builtin.systemd:
+    name: systemd-vconsole-setup
+    state: restarted
+
