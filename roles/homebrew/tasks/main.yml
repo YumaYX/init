@@ -1,0 +1,57 @@
+---
+# tasks file for roles/homebrew
+- name: Install package group
+  ansible.builtin.shell: |
+    dnf -y groupinstall "Development Tools"
+
+- name: Install tools
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - procps-ng
+    - curl
+    - file
+
+- name: linuxbrew user
+  ansible.builtin.user:
+    name: linuxbrew
+    shell: /bin/bash
+    create_home: yes
+    home: /home/linuxbrew
+    state: present
+
+- name: download Linuxbrew install script
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    dest: /tmp/install_linuxbrew.sh
+    mode: '0777'
+
+- name: install Linuxbrew
+  ansible.builtin.shell: CI=1 /bin/bash /tmp/install_linuxbrew.sh
+  become_user: linuxbrew
+  become: true
+
+- name: Set /home/linuxbrew permissions
+  file:
+    path: /home/linuxbrew
+    mode: '0757'
+    state: directory
+
+- name: Recursively set permissions for .linuxbrew
+  file:
+    path: /home/linuxbrew/.linuxbrew
+    mode: '0757'
+    recurse: yes
+    state: directory
+
+- name: Ensure Linuxbrew eval is in .bashrc
+  blockinfile:
+    path: /home/linuxbrew/.bashrc
+    block: |
+      test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+    create: yes
+    marker: "# {mark} ANSIBLE LINUXBREW INIT"
+  become_user: linuxbrew
+  become: true
+

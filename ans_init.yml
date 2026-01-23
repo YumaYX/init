@@ -18,6 +18,7 @@
     - init
     - console
     - user
+    - homebrew
     - workspace
     #- rust
     - rust-dnf
