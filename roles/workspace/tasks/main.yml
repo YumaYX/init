@@ -1,5 +1,10 @@
 ---
 # Tasks file for the workspace role
+- name: Create user
+  ansible.builtin.user:
+    name: "{{ prime_user }}"
+    shell: /bin/bash
+
 - name: Ensure necessary directories exist
   ansible.builtin.file:
     path: /work/{{ item }}

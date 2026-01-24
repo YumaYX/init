@@ -16,8 +16,8 @@
     ruby_version: 4.0.0
   roles:
     - init
-    - workspace
     - console
+    - workspace
     - user
     - homebrew
     #- rust
