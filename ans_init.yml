@@ -16,10 +16,10 @@
     ruby_version: 4.0.0
   roles:
     - init
+    - workspace
     - console
     - user
     - homebrew
-    - workspace
     #- rust
     - rust-dnf
     - ruby
