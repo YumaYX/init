@@ -45,13 +45,13 @@
 - name: Git clone # noqa latest[git]
   ansible.builtin.git:
     repo: https://github.com/YumaYX/dotfiles.git
-    dest: /home/{{ prime_user }}/dotfiles
+    dest: /work/downloads/dotfiles
   become: true
   become_user: "{{ prime_user }}"
 
 - name: Run 'install' target as {{ prime_user }}
   community.general.make:
-    chdir: /home/{{ prime_user }}/dotfiles
+    chdir: /work/downloads/dotfiles
     target: install
   become: true
   become_user: "{{ prime_user }}"
