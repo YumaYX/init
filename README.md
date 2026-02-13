@@ -21,6 +21,10 @@ Vagrantfile for Testing the init
 # How to connect to a Samba Server
 
 ```
+smb://user:user@192.168.11.42
+```
+
+```
 net use r: \\172.17.64.1\share user /user:user
 ```
 
