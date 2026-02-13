@@ -21,4 +21,6 @@ Vagrantfile for Testing the init
 # Execution environment 
 
 - AlmaLinux 9
+- AlmaLinux 10
+
 
