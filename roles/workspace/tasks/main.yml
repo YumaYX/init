@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: /work/{{ item }}
     state: directory
-    recurse: true
+    recurse: false
     owner: "{{ prime_user }}"
     group: "{{ prime_user }}"
     mode: "0755"
