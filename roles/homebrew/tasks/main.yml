@@ -28,6 +28,7 @@
     mode: '0777'
 
 - name: install Linuxbrew
+  ignore_errors: true
   ansible.builtin.shell: CI=1 /bin/bash /tmp/install_linuxbrew.sh
   become_user: linuxbrew
   become: true
