@@ -18,6 +18,12 @@ curl -L bit.ly/startinit | sh
 
 Vagrantfile for Testing the init
 
+# How to connect to a Samba Server
+
+```
+net use r: \\172.17.64.1\share user /user:user
+```
+
 # Execution environment 
 
 - AlmaLinux 9
