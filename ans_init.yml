@@ -26,13 +26,12 @@
     - ys1
     - httpd
     - samba
+    - code
     #- rear
     - role: kvm
-      when: virt_check.stdout == "none"
-      ignore_errors: true
-    - role: code
       when: virt_check.stdout == "none"
       ignore_errors: true
     - role: more
       ignore_errors: true
     - serverspec
+
