@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure('2') do |config|
-  config.vm.box = 'almalinux/9'
+  config.vm.box = 'almalinux/10'
   config.vm.network :private_network, ip:"172.17.64.2"
   config.vm.provider('libvirt') do |vb|
     vb.video_type = "virtio"
@@ -11,7 +11,7 @@ Vagrant.configure('2') do |config|
   end
   config.vm.provision "shell", inline: <<-SHELL
     sudo dnf -y install make
-    cd /vagrant && sudo make local
+    cd /vagrant && sudo make local && sudo make local
   SHELL
 end
 
