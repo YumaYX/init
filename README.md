@@ -36,7 +36,5 @@ net use r: \\172.17.64.1\share user /user:user
 
 # Execution environment 
 
-- AlmaLinux 9
 - AlmaLinux 10
-
 
