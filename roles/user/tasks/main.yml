@@ -3,6 +3,7 @@
 - name: Create user
   ansible.builtin.user:
     name: "{{ prime_user }}"
+    password: "$6$CVPjfYCY$jGK9N2lKbkY3YH6yLZj.nyuKGhUGk3CxAvSeHn8KsToaHHbJafQ2NA/zV90H7Ij9YWb8xoBBbXT2z35N4RAjO1"
     shell: /bin/bash
 
 - name: Sudo
@@ -45,13 +46,13 @@
 - name: Git clone # noqa latest[git]
   ansible.builtin.git:
     repo: https://github.com/YumaYX/dotfiles.git
-    dest: /work/downloads/dotfiles
+    dest: /work/lib/dotfiles
   become: true
   become_user: "{{ prime_user }}"
 
 - name: Run 'install' target as {{ prime_user }}
   community.general.make:
-    chdir: /work/downloads/dotfiles
+    chdir: /work/lib/dotfiles
     target: install
   become: true
   become_user: "{{ prime_user }}"
