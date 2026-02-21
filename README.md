@@ -14,6 +14,12 @@ curl -fsSL https://raw.githubusercontent.com/YumaYX/init/main/init.sh | sudo sh
 curl -L bit.ly/startinit | sh
 ```
 
+## How to Excecute a role
+
+```sh
+sh role.sh <role>
+```
+
 # Vagrantfile
 
 Vagrantfile for Testing the init
