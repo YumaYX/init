@@ -3,8 +3,8 @@ name = "init"
 version = "0.1.0"
 description = "init"
 readme = "README.md"
-requires-python = "==3.12.*"
+requires-python = "==3.11.*"
 dependencies = [
-    "ansible==12.3.0",
-    "ansible-core==2.19.6"
+    "ansible>=12.3.0",
+    "ansible-core>=2.19.6"
 ]
