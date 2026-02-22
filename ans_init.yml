@@ -19,7 +19,7 @@
     - console
     - workspace
     - user
-    - homebrew
+    #- homebrew
     #- rust
     - rust-dnf
     - ruby
