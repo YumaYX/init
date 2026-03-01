@@ -1,0 +1,9 @@
+---
+# tasks file for roles/zed
+- name: install zed
+  ansible.builtin.command: bash -lc "curl -f https://zed.dev/install.sh | sh"
+  ignore_errors: true
+  become: true
+  become_user: "{{ prime_user }}"
+  changed_when: command_result.rc != 0
+  failed_when: false

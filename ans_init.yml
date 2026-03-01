@@ -26,7 +26,8 @@
     - ys1
     - httpd
     - samba
-    - code
+    #- code
+    - zed
     #- rear
     - role: kvm
       when: virt_check.stdout == "none"
@@ -34,4 +35,3 @@
     - role: more
       ignore_errors: true
     - serverspec
-
