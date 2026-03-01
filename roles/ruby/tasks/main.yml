@@ -68,14 +68,12 @@
   register: result
   changed_when: result.rc != 0
 
-
 - name: Update Gems system
   ansible.builtin.command: bash -lc "gem update --system"
   become: true
   become_user: "{{ prime_user }}"
   register: result
   changed_when: result.rc != 0
-
 
 #- name: Install necessary gems
 #  community.general.gem:
@@ -98,22 +96,22 @@
   command: "/home/{{ prime_user }}/.rbenv/shims/gem install {{ item }}"
   loop:
     - bundler
-    - minitest
-    - rake
-    - roo
-    - rubocop
-    - rails
-    - activerecord
-    - sqlite3
   become: true
   become_user: "{{ prime_user }}"
+#    - roo
+#    - rails
+#    - minitest
+#    - rubocop
+#    - activerecord
+#    - sqlite3
+#    - rake
 
-- name: Update Gems
-  ansible.builtin.command: bash -lc "gem update"
-  become: true
-  become_user: "{{ prime_user }}"
-  register: result
-  changed_when: result.rc != 0
+#- name: Update Gems
+#  ansible.builtin.command: bash -lc "gem update"
+#  become: true
+#  become_user: "{{ prime_user }}"
+#  register: result
+#  changed_when: result.rc != 0
 
 - name: shell of update ruby gems
   ansible.builtin.copy:
@@ -137,4 +135,3 @@
     weekday: "5"
     job: /usr/local/bin/update-rubygems
     user: "{{ prime_user }}"
-
